@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from './store';
+import { useEffect, useState } from "react";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "./store";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch: () => AppDispatch = useDispatch;
@@ -51,14 +51,21 @@ export const useDebouncedPricing = ({
   return debouncedValue;
 };
 
-export function debounceFunction(func: any, wait: number) {
-  let timeout: any;
-  return function executedFunction(...args: any[]) {
+export function debounceFunction<T extends (...args: unknown[]) => unknown>(
+  func: T,
+  wait: number
+) {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  return function executedFunction(...args: Parameters<T>) {
     const later = () => {
-      clearTimeout(timeout);
+      if (timeout !== undefined) {
+        clearTimeout(timeout);
+      }
       func(...args);
     };
-    clearTimeout(timeout);
+    if (timeout !== undefined) {
+      clearTimeout(timeout);
+    }
     timeout = setTimeout(later, wait);
   };
 }

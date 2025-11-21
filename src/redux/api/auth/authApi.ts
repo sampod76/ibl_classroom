@@ -1,29 +1,29 @@
-import { tagTypes } from '../../tag-types';
-import { baseApi } from '../baseApi';
+import { tagTypes } from "../../tag-types";
+import { baseApi } from "../baseApi";
 
-const AUTH_URL = '/auth';
+const AUTH_URL = "/auth";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     userLogin: build.mutation({
       query: (loginData) => ({
         url: `${AUTH_URL}/login`,
-        method: 'POST',
+        method: "POST",
         data: loginData,
       }),
       invalidatesTags: [tagTypes.LoginHistory],
     }),
     changePassword: build.mutation({
       query: (data) => ({
-        url: '/auth/change-password',
-        method: 'POST',
+        url: "/auth/change-password",
+        method: "POST",
         data: data,
       }),
     }),
     userLogOut: build.mutation({
-      query: ({ id, data }) => ({
+      query: ({ id }) => ({
         url: `${AUTH_URL}/log-out-history/${id}`,
-        method: 'POST',
+        method: "POST",
         data: {},
         withCredentials: true,
       }),
@@ -32,14 +32,14 @@ export const authApi = baseApi.injectEndpoints({
     getProfile: build.query({
       query: () => ({
         url: `${AUTH_URL}/profile`,
-        method: 'GET',
+        method: "GET",
       }),
       providesTags: [tagTypes.profile],
     }),
     updateRole: build.mutation({
       query: (data) => ({
         url: `/users/update-role/${data.id}`,
-        method: 'PATCH',
+        method: "PATCH",
         data: data.body,
       }),
       invalidatesTags: [tagTypes.profile],
@@ -47,7 +47,7 @@ export const authApi = baseApi.injectEndpoints({
     forgetPassword: build.mutation({
       query: (data) => ({
         url: `${AUTH_URL}/forgot-password`,
-        method: 'POST',
+        method: "POST",
         data: data,
       }),
       invalidatesTags: [tagTypes.profile],
@@ -55,7 +55,7 @@ export const authApi = baseApi.injectEndpoints({
     resetPassword: build.mutation({
       query: (data) => ({
         url: `${AUTH_URL}/reset-password`,
-        method: 'POST',
+        method: "POST",
         data: data,
       }),
       invalidatesTags: [tagTypes.profile],

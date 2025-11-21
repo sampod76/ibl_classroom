@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   AccountBookFilled,
   ApartmentOutlined,
@@ -16,18 +17,18 @@ import {
   UsergroupDeleteOutlined,
   UserOutlined,
   UserSwitchOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 
-import type { MenuProps } from 'antd';
-import Link from 'next/link';
-import { CiLogin } from 'react-icons/ci';
-import { FaPage4 } from 'react-icons/fa';
-import { GiJetPack } from 'react-icons/gi';
-import { MdAssignment, MdMarkEmailRead } from 'react-icons/md';
-import { PiCertificateLight, PiPackageDuotone } from 'react-icons/pi';
-import { USER_ROLE } from './role';
+import type { MenuProps } from "antd";
+import Link from "next/link";
+import { CiLogin } from "react-icons/ci";
+import { FaPage4 } from "react-icons/fa";
+import { GiJetPack } from "react-icons/gi";
+import { MdAssignment, MdMarkEmailRead } from "react-icons/md";
+import { PiCertificateLight, PiPackageDuotone } from "react-icons/pi";
+import { USER_ROLE } from "./role";
 export const dashboardItems = (role: string, setCollapsed?: any) => {
-  const defaultSidebarItems: MenuProps['items'] = [
+  const defaultSidebarItems: MenuProps["items"] = [
     {
       label: (
         <div>
@@ -44,8 +45,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
     },
 
     {
-      label: 'Profile',
-      key: 'profile',
+      label: "Profile",
+      key: "profile",
       icon: <ProfileOutlined />,
 
       children: [
@@ -62,16 +63,16 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
         },
         {
           label: <Link href={`/loginHistory`}>Login history</Link>,
-          key: 'Login history',
+          key: "Login history",
           icon: <CiLogin />,
         },
       ],
     },
   ];
-  const trainerSidebarItems: MenuProps['items'] = [
+  const trainerSidebarItems: MenuProps["items"] = [
     {
-      label: 'Category',
-      key: 'manage-category',
+      label: "Category",
+      key: "manage-category",
       icon: <CreditCardOutlined />,
       children: [
         {
@@ -99,8 +100,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: 'Course label',
-      key: 'Level',
+      label: "Course label",
+      key: "Level",
       icon: <CreditCardOutlined />,
       children: [
         {
@@ -128,8 +129,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: 'Grade label',
-      key: 'Leveldd',
+      label: "Grade label",
+      key: "Leveldd",
       icon: <CreditCardOutlined />,
       children: [
         {
@@ -146,8 +147,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: ' Course',
-      key: 'manage-Course',
+      label: " Course",
+      key: "manage-Course",
       icon: <FileTextOutlined />,
       children: [
         {
@@ -323,11 +324,11 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
     //   ],
     // },
   ];
-  const adminSidebarItems: MenuProps['items'] = [
+  const adminSidebarItems: MenuProps["items"] = [
     ...defaultSidebarItems,
     {
-      label: 'Certifyme',
-      key: 'certifyme',
+      label: "Certifyme",
+      key: "certifyme",
       icon: <PiCertificateLight />,
       children: [
         {
@@ -352,18 +353,18 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
           Donation History
         </Link>
       ),
-      key: 'donation',
+      key: "donation",
       icon: <CreditCardTwoTone />,
     },
     ...trainerSidebarItems,
     {
-      label: ' Users',
-      key: 'manage-user',
+      label: " Users",
+      key: "manage-user",
       icon: <UsergroupDeleteOutlined />,
       children: [
         {
-          label: 'All Members',
-          key: 'All-Members',
+          label: "All Members",
+          key: "All-Members",
           icon: <UserOutlined />,
           children: [
             {
@@ -380,8 +381,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
           ],
         },
         {
-          label: 'Students',
-          key: 'students',
+          label: "Students",
+          key: "students",
           icon: <ContactsOutlined />,
           children: [
             {
@@ -409,8 +410,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
           ],
         },
         {
-          label: 'Teacher',
-          key: 'teacher',
+          label: "Teacher",
+          key: "teacher",
           icon: <UserSwitchOutlined />,
           children: [
             {
@@ -438,8 +439,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
           ],
         },
         {
-          label: 'Admin',
-          key: 'admin',
+          label: "Admin",
+          key: "admin",
           icon: <UserOutlined />,
           children: [
             {
@@ -469,8 +470,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: 'Manage Package',
-      key: 'Manage-Package',
+      label: "Manage Package",
+      key: "Manage-Package",
       icon: <GiJetPack />,
       children: [
         {
@@ -498,8 +499,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: 'FAQ',
-      key: 'FAQ-Package',
+      label: "FAQ",
+      key: "FAQ-Package",
       icon: <GiJetPack />,
       children: [
         {
@@ -527,8 +528,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: 'Page builders',
-      key: 'Page builders',
+      label: "Page builders",
+      key: "Page builders",
       icon: <FaPage4 />,
       children: [
         {
@@ -545,8 +546,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: 'Email Marketing',
-      key: 'Email-Marketing',
+      label: "Email Marketing",
+      key: "Email-Marketing",
       icon: <MdMarkEmailRead />,
       children: [
         {
@@ -563,8 +564,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: 'Home Video Upload',
-      key: 'Home-Video-Upload',
+      label: "Home Video Upload",
+      key: "Home-Video-Upload",
       icon: <GiJetPack />,
       children: [
         {
@@ -612,7 +613,7 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
           Purchase Package History
         </Link>
       ),
-      key: 'Manage-pouches-package',
+      key: "Manage-pouches-package",
       icon: <PayCircleFilled />,
     },
     {
@@ -624,16 +625,16 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
           Purchase course History
         </Link>
       ),
-      key: 'Manage-pouches-course',
+      key: "Manage-pouches-course",
       icon: <PayCircleFilled />,
     },
     {
-      label: 'Manage Features',
-      key: 'manage-features',
+      label: "Manage Features",
+      key: "manage-features",
       icon: <PicLeftOutlined />,
       children: [
         {
-          label: 'Advance Class',
+          label: "Advance Class",
           key: `/${role}/features/advance-classsdfsd`,
           children: [
             {
@@ -661,7 +662,7 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
           ],
         },
         {
-          label: 'Skills Plan',
+          label: "Skills Plan",
           key: `/${role}/features/skills-plan`,
           children: [
             {
@@ -689,7 +690,7 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
           ],
         },
         {
-          label: 'Short Overview',
+          label: "Short Overview",
           key: `/${role}/features/short-overviewsdfs`,
           children: [
             {
@@ -719,8 +720,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       ],
     },
     {
-      label: 'Contact',
-      key: 'manage-contact',
+      label: "Contact",
+      key: "manage-contact",
       icon: <ContactsFilled />,
       children: [
         // {
@@ -749,7 +750,7 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
     },
   ];
 
-  const studentSidebarItems: MenuProps['items'] = [
+  const studentSidebarItems: MenuProps["items"] = [
     ...defaultSidebarItems,
     // {
     //   label: (
@@ -850,7 +851,7 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       key: `/contact`,
     },
   ];
-  const sellerSidebarItems: MenuProps['items'] = [
+  const sellerSidebarItems: MenuProps["items"] = [
     ...defaultSidebarItems,
     // ...trainerSidebarItems.filter((item) => item?.key !== 'manage-category'),
     // {
@@ -890,8 +891,8 @@ export const dashboardItems = (role: string, setCollapsed?: any) => {
       key: `/${role}/package`,
     },
     {
-      label: 'Students',
-      key: 'students',
+      label: "Students",
+      key: "students",
       icon: <UserOutlined />,
       children: [
         // {

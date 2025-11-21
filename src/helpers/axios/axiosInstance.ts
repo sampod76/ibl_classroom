@@ -1,14 +1,16 @@
-import { authKey } from '@/constants/storageKey';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { authKey } from "@/constants/storageKey";
 
-import { ResponseSuccessType } from '@/types';
-import { getFromLocalStorage, setToLocalStorage } from '@/utils/local-storage';
-import axios from 'axios';
-import { getBaseUrl } from '../config/envConfig';
+import { ResponseSuccessType } from "@/types";
+import { getFromLocalStorage, setToLocalStorage } from "@/utils/local-storage";
+import axios from "axios";
+import { getBaseUrl } from "../config/envConfig";
 // import { message } from 'antd';
 
 const instance = axios.create();
-instance.defaults.headers.post['Content-Type'] = 'application/json';
-instance.defaults.headers['Accept'] = 'application/json';
+instance.defaults.headers.post["Content-Type"] = "application/json";
+instance.defaults.headers["Accept"] = "application/json";
 instance.defaults.timeout = 60000;
 
 // Add a request interceptor
@@ -25,7 +27,7 @@ instance.interceptors.request.use(
   function (error) {
     // Do something with request error
     return Promise.reject(error);
-  },
+  }
 );
 
 // Add a response interceptor
@@ -52,17 +54,17 @@ instance.interceptors.response.use(
         const response = await axios.post(
           `${getBaseUrl()}/auth/refresh-token`,
           {},
-          { withCredentials: true },
+          { withCredentials: true }
         );
         const accessToken = response?.data?.data?.accessToken;
         // axios.defaults.headers.common['Authorization'] = accessToken;
-        config.headers['Authorization'] = accessToken;
+        config.headers["Authorization"] = accessToken;
         setToLocalStorage(authKey, accessToken);
         return instance(config);
       } catch (error: any) {
         // removeUserInfo(authKey);
         localStorage.clear();
-        window.location.href = '/login';
+        window.location.href = "/login";
         return Promise.reject(error?.response?.data);
       }
     } else {
@@ -78,17 +80,21 @@ instance.interceptors.response.use(
     */
       const responseObject: any = {
         statusCode: error?.response?.status || 500,
-        message: 'Something went wrong',
+        message: "Something went wrong",
         success: false,
         errorMessages: [],
       };
       // Check if the error response has the expected structure
       if (error?.response?.data) {
-        responseObject.message = error?.response?.data?.message || responseObject.message;
-        responseObject.success = error?.response?.data?.success || responseObject.success;
+        responseObject.message =
+          error?.response?.data?.message || responseObject.message;
+        responseObject.success =
+          error?.response?.data?.success || responseObject.success;
 
         if (error?.response?.data?.errorMessage) {
-          responseObject.errorMessages.push(error?.response?.data?.errorMessage);
+          responseObject.errorMessages.push(
+            error?.response?.data?.errorMessage
+          );
         }
       }
       return Promise.reject(responseObject);
@@ -96,7 +102,7 @@ instance.interceptors.response.use(
     }
 
     // return Promise.reject(error);
-  },
+  }
 );
 
 export { instance };

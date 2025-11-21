@@ -1,5 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../store";
 
 interface UserRole {
   data: {
@@ -14,16 +15,19 @@ interface UserRole {
 }
 
 const initialState: UserRole = {
-  data: { role: '', name: '', email: '', _id: '' },
+  data: { role: "", name: "", email: "", _id: "" },
   isLoading: true,
   isError: false,
 };
 
 export const userRoleSlice = createSlice({
-  name: 'userInfo',
+  name: "userInfo",
   initialState,
   reducers: {
-    setUserRole: ({ data, isLoading, isError }, { payload }: { payload: UserRole }) => {
+    setUserRole: (
+      { data, isLoading, isError },
+      { payload }: { payload: UserRole }
+    ) => {
       data.role = payload.data.role;
       data.email = payload.data.email;
       data.name = payload.data.name;
