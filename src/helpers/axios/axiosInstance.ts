@@ -5,7 +5,8 @@ import { authKey } from "@/constants/storageKey";
 import { ResponseSuccessType } from "@/types";
 import { getFromLocalStorage, setToLocalStorage } from "@/utils/local-storage";
 import axios from "axios";
-import { getBaseUrl } from "../config/envConfig";
+import { configEnv } from "../config/envConfig";
+
 // import { message } from 'antd';
 
 const instance = axios.create();
@@ -52,7 +53,7 @@ instance.interceptors.response.use(
         // const response = await getRefreshToken();
         // const accessToken = response?.data?.accessToken;
         const response = await axios.post(
-          `${getBaseUrl()}/auth/refresh-token`,
+          `${configEnv.API_BASE_URL}/auth/refresh-token`,
           {},
           { withCredentials: true }
         );
