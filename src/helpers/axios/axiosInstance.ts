@@ -3,10 +3,10 @@
 import { authKey } from "@/constants/storageKey";
 
 import { ResponseSuccessType } from "@/types";
-import { getFromLocalStorage, setToLocalStorage } from "@/utils/local-storage";
+import { AuthService } from "@/utils/local-storage";
 import axios from "axios";
 import { configEnv } from "../config/envConfig";
-
+const authservice = new AuthService();
 // import { message } from 'antd';
 
 const instance = axios.create();
@@ -18,7 +18,7 @@ instance.defaults.timeout = 60000;
 instance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
-    const accessToken = getFromLocalStorage(authKey);
+    const accessToken = authservice.getToken(authKey);
     if (accessToken) {
       config.headers.Authorization = accessToken;
     }
@@ -60,7 +60,8 @@ instance.interceptors.response.use(
         const accessToken = response?.data?.data?.accessToken;
         // axios.defaults.headers.common['Authorization'] = accessToken;
         config.headers["Authorization"] = accessToken;
-        setToLocalStorage(authKey, accessToken);
+
+        authservice.setToken(authKey, accessToken);
         return instance(config);
       } catch (error: any) {
         // removeUserInfo(authKey);

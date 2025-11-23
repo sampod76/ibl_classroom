@@ -1,24 +1,48 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Menu, Settings, Users, Calendar, Bell, GraduationCap } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import {
+  Menu,
+  Settings,
+  Users,
+  Calendar,
+  Bell,
+  GraduationCap,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export function ClassroomHeader({
-  activeTab = "stream",
-  onTabChange,
   userRole = "student",
 }: {
-  activeTab?: string
-  onTabChange?: (tab: "stream" | "classwork" | "people" | "grades") => void
-  userRole?: "student" | "teacher"
+  userRole?: "student" | "teacher";
 }) {
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get("activeTab") || "stream";
+  const router = useRouter();
+  const pathname = usePathname();
+  const handleMultipleQueryChange = (payload: Record<string, any>) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+
+    Object.entries(payload).forEach(([key, value]) => {
+      currentParams.set(key, value);
+    });
+
+    router.replace(`${pathname}?${currentParams.toString()}`);
+  };
+  const handleQueryChange = (key: string, value: any) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.set(key, value);
+
+    router.replace(`${pathname}?${currentParams.toString()}`);
+  };
+
   return (
     <header className="border-b border-border bg-card sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -30,7 +54,9 @@ export function ClassroomHeader({
             </Button>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold text-foreground">Advanced Mathematics</h1>
+                <h1 className="text-lg font-semibold text-foreground">
+                  Advanced Mathematics
+                </h1>
                 {userRole === "teacher" && (
                   <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                     <GraduationCap className="h-3 w-3" />
@@ -38,7 +64,9 @@ export function ClassroomHeader({
                   </span>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">Spring 2024 • Section A</p>
+              <p className="text-xs text-muted-foreground">
+                Spring 2024 • Section A
+              </p>
             </div>
           </div>
 
@@ -82,7 +110,7 @@ export function ClassroomHeader({
 
         <nav className="flex gap-6 border-t border-border">
           <button
-            onClick={() => onTabChange?.("stream")}
+            onClick={() => handleQueryChange("activeTab", "stream")}
             className={`border-b-2 py-3 text-sm font-medium ${
               activeTab === "stream"
                 ? "border-primary text-foreground"
@@ -92,7 +120,7 @@ export function ClassroomHeader({
             Stream
           </button>
           <button
-            onClick={() => onTabChange?.("classwork")}
+            onClick={() => handleQueryChange("activeTab", "classwork")}
             className={`border-b-2 py-3 text-sm font-medium ${
               activeTab === "classwork"
                 ? "border-primary text-foreground"
@@ -102,7 +130,7 @@ export function ClassroomHeader({
             Classwork
           </button>
           <button
-            onClick={() => onTabChange?.("people")}
+            onClick={() => handleQueryChange("activeTab", "people")}
             className={`border-b-2 py-3 text-sm font-medium ${
               activeTab === "people"
                 ? "border-primary text-foreground"
@@ -112,7 +140,7 @@ export function ClassroomHeader({
             People
           </button>
           <button
-            onClick={() => onTabChange?.("grades")}
+            onClick={() => handleQueryChange("activeTab", "grades")}
             className={`border-b-2 py-3 text-sm font-medium ${
               activeTab === "grades"
                 ? "border-primary text-foreground"
@@ -124,5 +152,5 @@ export function ClassroomHeader({
         </nav>
       </div>
     </header>
-  )
+  );
 }

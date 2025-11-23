@@ -8,12 +8,17 @@ import { PeoplePage } from "@/components/classroom/people-page";
 import { GradesPage } from "@/components/classroom/grades-page";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useAppSelector } from "@/redux/hooks";
 
 export default function TeacherHomeComponent() {
-  const [activeTab, setActiveTab] = useState<
-    "stream" | "classwork" | "people" | "grades"
-  >("stream");
+  const { data, isLoading } = useAppSelector((state) => state.userInfo);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const activeTab = searchParams.get("activeTab") || "stream";
   const [userRole, setUserRole] = useState<"student" | "teacher">("student");
+  // const userRole = data?.role;
 
   return (
     <div className="min-h-screen bg-background">
@@ -42,11 +47,7 @@ export default function TeacherHomeComponent() {
         </div>
       </div>
 
-      <ClassroomHeader
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        userRole={userRole}
-      />
+      <ClassroomHeader userRole={userRole} />
       <div className="container mx-auto px-4 py-6">
         {activeTab === "stream" && (
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
