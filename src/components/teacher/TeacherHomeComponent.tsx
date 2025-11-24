@@ -35,9 +35,6 @@ export default function TeacherHomeComponent() {
       {/* Role Switcher - Demo purposes */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto flex items-center justify-between px-4 py-2">
-          <span className="text-xs text-muted-foreground">
-            Demo Mode: Switch between views
-          </span>
           <div className="flex gap-2">
             <Button
               variant={userRole === "student" ? "default" : "outline"}

@@ -67,7 +67,10 @@ export async function middleware(req: NextRequest) {
   }
   if (session?.id && pathname === "/dashboard") {
     return NextResponse.redirect(
-      new URL(`/dashboard/${session.role}`, req.url)
+      new URL(
+        `/dashboard/${session.role == "seller" ? "teacher" : session.role}`,
+        req.url
+      )
     );
   }
 

@@ -27,7 +27,7 @@ export function ClassroomHeader({
   const activeTab = searchParams.get("activeTab") || "stream";
   const router = useRouter();
   const pathname = usePathname();
-  const handleMultipleQueryChange = (payload: Record<string, any>) => {
+  const handleMultipleQueryChange = (payload: Record<string, string>) => {
     const currentParams = new URLSearchParams(searchParams.toString());
 
     Object.entries(payload).forEach(([key, value]) => {
@@ -36,7 +36,7 @@ export function ClassroomHeader({
 
     router.replace(`${pathname}?${currentParams.toString()}`);
   };
-  const handleQueryChange = (key: string, value: any) => {
+  const handleQueryChange = (key: string, value: string) => {
     const currentParams = new URLSearchParams(searchParams.toString());
     currentParams.set(key, value);
 
@@ -67,43 +67,6 @@ export function ClassroomHeader({
               <p className="text-xs text-muted-foreground">
                 Spring 2024 • Section A
               </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-medium text-accent-foreground">
-                3
-              </span>
-              <span className="sr-only">Notifications</span>
-            </Button>
-
-            <Button variant="ghost" size="icon">
-              <Calendar className="h-5 w-5" />
-              <span className="sr-only">Calendar</span>
-            </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Settings className="h-5 w-5" />
-                  <span className="sr-only">Settings</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
-                  <Users className="mr-2 h-4 w-4" />
-                  Class settings
-                </DropdownMenuItem>
-                <DropdownMenuItem>View grades</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Leave class</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <div className="ml-2 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
-              {userRole === "teacher" ? "PJ" : "JS"}
             </div>
           </div>
         </div>

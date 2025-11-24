@@ -11,13 +11,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession();
+
   return (
-    <html lang="en">
-      <body className="font-sans antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="grammarly-disable" content="true" />
+      </head>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <Providers>
           <SessionProvider initialSession={session}>{children}</SessionProvider>
-
-          {/* <Analytics /> */}
           <Toaster richColors position="top-center" />
         </Providers>
       </body>

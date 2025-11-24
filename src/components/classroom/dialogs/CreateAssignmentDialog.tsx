@@ -19,7 +19,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function CreateAssignmentDialog({ open, setOpen }) {
+export default function CreateAssignmentDialog({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-2xl">
