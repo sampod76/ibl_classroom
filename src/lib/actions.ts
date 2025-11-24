@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 
 export async function createSession(token: string) {
-  cookies().set("session", token, {
+  (await cookies()).set("session", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -12,5 +12,5 @@ export async function createSession(token: string) {
 }
 
 export async function clearSession() {
-  cookies().delete("session");
+  (await cookies()).delete("session");
 }

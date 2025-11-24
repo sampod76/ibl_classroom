@@ -11,14 +11,17 @@ import { Button } from "@/components/ui/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/features/user/userRoleSlice";
+import { signoutSession } from "@/lib/auth_server";
 
 export default function TeacherHomeComponent() {
   const dispatch = useAppDispatch();
   const { data: UserData, isLoading: UserLoading } = useAppSelector(
     (state) => state.userInfo
   );
-  const logoutFun = () => {
+  const logoutFun = async () => {
+    await signoutSession();
     dispatch(logout());
+    router.push("/login");
   };
   const searchParams = useSearchParams();
   const pathname = usePathname();

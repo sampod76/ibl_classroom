@@ -39,14 +39,14 @@ const SessionProvider = ({
       );
     }
   }, [initialSession?.accessToken]);
-  useEffect(() => {
-    if (isLogout) {
-      (async () => {
-        await signoutSession();
-        router.push("/login");
-      })();
-    }
-  }, [isLogout]);
+  // useEffect(() => {
+  //   if (isLogout) {
+  //     (async () => {
+  //       await signoutSession();
+  //       router.push("/login");
+  //     })();
+  //   }
+  // }, [isLogout]);
 
   return <>{children}</>;
 };

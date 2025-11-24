@@ -12,6 +12,7 @@ import { tagTypesList } from "../tag-types";
 import { configEnv } from "@/helpers/config/envConfig";
 import { logout, setUserRole } from "../features/user/userRoleSlice";
 import { RootState } from "../store";
+import { signoutSession } from "@/lib/auth_server";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: configEnv.API_BASE_URL,
@@ -76,6 +77,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 
       result = await baseQuery(args, api, extraOptions);
     } else {
+      await signoutSession();
       api.dispatch(logout());
     }
   }
