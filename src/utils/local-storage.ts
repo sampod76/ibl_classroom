@@ -47,7 +47,6 @@ export class AuthService {
     return this.decodeToken<T>(token);
   }
   setTokenAndDecodeUser<T>(token: string): T | null {
-    console.log("🚀 ~ AuthService ~ setTokenAndDecodeUser ~ token:", token);
     this.setToken(authKey, token);
     return this.decodeToken<T>(token);
   }

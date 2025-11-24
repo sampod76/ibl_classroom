@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthService } from "@/utils/local-storage";
 import { Spin } from "antd";
+import { UserState } from "@/redux/features/user/userRoleSlice";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const auth = new AuthService();
-    const user = auth.getDecodedUser<any>();
+    const user = auth.getDecodedUser<UserState>();
 
     if (!user || user.role !== "student") {
       auth.logout(); // remove token
@@ -19,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    setLoading(false);
+    setTimeout(() => setLoading(false), 0);
   }, []);
 
   if (loading)
@@ -31,3 +32,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
+
+// import React from "react";
+
+// export default function layout({ children }: { children: React.ReactNode }) {
+//   return <div>{children}</div>;
+// }
