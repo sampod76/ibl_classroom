@@ -10,18 +10,23 @@ export interface UserState {
   id: string;
   roleBaseUserId?: string;
   userId?: string;
+  exp: number;
+  iat: number;
+  accessToken?: string;
 }
 export interface TokenUserRole {
   data?: UserState;
   isLoading?: boolean;
   isError?: boolean;
   errorMessage?: string;
+  isLogout?: boolean;
 }
 
 const initialState: TokenUserRole = {
   // data: {},
   isLoading: true,
   isError: false,
+  isLogout: false,
 };
 
 export const userRoleSlice = createSlice({
@@ -37,6 +42,9 @@ export const userRoleSlice = createSlice({
           id: payload.data.id,
           roleBaseUserId: payload.data?.roleBaseUserId,
           userId: payload.data?.userId,
+          exp: payload.data?.exp,
+          iat: payload.data?.iat,
+          accessToken: payload.data?.accessToken,
         };
       }
       if (typeof payload.isLoading !== "undefined") {
@@ -45,11 +53,18 @@ export const userRoleSlice = createSlice({
       if (typeof payload.isError !== "undefined") {
         state.isError = payload.isError;
       }
+      state.isLogout = false;
+    },
+    logout: (state) => {
+      state.data = undefined;
+      state.isLoading = false;
+      state.isError = false;
+      state.isLogout = true;
     },
   },
 });
 
-export const { setUserRole } = userRoleSlice.actions;
+export const { setUserRole, logout } = userRoleSlice.actions;
 
 // export const selectRole  =(state:RootState) =>state.
 

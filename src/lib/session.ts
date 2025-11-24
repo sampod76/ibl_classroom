@@ -31,6 +31,7 @@ export async function getSession(): Promise<TSession> {
     if (session?.userId) {
       return {
         isAuth: true,
+        accessToken: cookie,
         user: {
           userId: session.userId,
           roleBaseUserId: session.roleBaseUserId,
@@ -45,5 +46,5 @@ export async function getSession(): Promise<TSession> {
     }
   }
 
-  return { isAuth: false, user: null };
+  return { isAuth: false, user: null, accessToken: "" };
 }

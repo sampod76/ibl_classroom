@@ -2,6 +2,7 @@ import { USER_ROLE } from "@/constants/role";
 
 export type TSession = {
   isAuth: boolean;
+  accessToken: string;
   user: SessionUser | null;
 };
 

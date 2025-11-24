@@ -16,7 +16,6 @@ export async function middleware(req: NextRequest) {
   // 1. Receive ct token from query (?ct=)
   // --------------------------------------
   const ct = searchParams.get("ct");
-  console.log("🔹 middleware ~ ct:", ct);
 
   if (ct) {
     // Save cookie
@@ -52,19 +51,24 @@ export async function middleware(req: NextRequest) {
   // --------------------------------------
   // 3. Public route: /auth/*
   // --------------------------------------
-  if (!session?.userId) {
+  if (!session?.id) {
     if (pathname.startsWith("/auth")) {
       return NextResponse.next();
     }
 
     return NextResponse.redirect(
-      new URL(`/auth?type=signin&redirect=${pathname}`, req.url)
+      new URL(`/login?type=signin&redirect=${pathname}`, req.url)
     );
   }
 
   // If logged-in user enters /auth → redirect home
-  if (session?.userId && pathname.startsWith("/auth")) {
+  if (session?.id && pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL("/", req.url));
+  }
+  if (session?.id && pathname === "/dashboard") {
+    return NextResponse.redirect(
+      new URL(`/dashboard/${session.role}`, req.url)
+    );
   }
 
   // --------------------------------------

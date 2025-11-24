@@ -9,10 +9,17 @@ import { GradesPage } from "@/components/classroom/grades-page";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { logout } from "@/redux/features/user/userRoleSlice";
 
 export default function TeacherHomeComponent() {
-  const { data, isLoading } = useAppSelector((state) => state.userInfo);
+  const dispatch = useAppDispatch();
+  const { data: UserData, isLoading: UserLoading } = useAppSelector(
+    (state) => state.userInfo
+  );
+  const logoutFun = () => {
+    dispatch(logout());
+  };
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -42,6 +49,13 @@ export default function TeacherHomeComponent() {
               onClick={() => setUserRole("teacher")}
             >
               Teacher View
+            </Button>
+            <Button
+              variant={userRole === "teacher" ? "default" : "outline"}
+              size="sm"
+              onClick={() => logoutFun()}
+            >
+              Logout
             </Button>
           </div>
         </div>
