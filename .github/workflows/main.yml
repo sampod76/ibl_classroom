@@ -1,0 +1,37 @@
+name: Frontend_classroom
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    name: Deploy Frontend_classroom
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack (PNPM support)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Replace .env with .env.live
+        run: cp -f .env.production .env
+
+      - name: Production build
+        run: |
+          NEXT_PUBLIC_ENV=production pnpm build
+
+      - name: Start/Restart frontend_classroom with PM2
+        run: |
+          if pm2 list | grep -q "frontend_classroom"; then
+            echo "frontend_classroom is already running, restarting it..."
+            pm2 restart frontend_classroom
+          else
+            echo "frontend_classroom is not running, starting it..."
+            pm2 start pnpm --name "frontend_classroom" -- start
+          fi
