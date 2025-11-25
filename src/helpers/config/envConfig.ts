@@ -1,24 +1,19 @@
-export const getBaseUrl = (): string => {
-  return process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api/v1';
-};
+import { z } from "zod";
 
-export const getOnlyBaseUrl = (): string => {
-  return process.env.NEXT_PUBLIC_API_ONLY_BASE_URL || 'http://localhost:5000';
-};
-export const getSocketBaseUrl = () => {
-  return process.env.NEXT_PUBLIC_BACKEND_SOCKET_BASEURL || 'http://localhost:5001';
-};
+const envSchema = z.object({
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
+  API_BASE_URL: z.string(),
+  API_ONLY_BASE_URL: z.string(),
+  BACKEND_SOCKET_BASEURL: z.string(),
+});
 
-export const getCloudinaryEnv = (): {
-  upload_preset: string;
-  cloud_name: string;
-} => {
-  return {
-    upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET || 'mvfmecoi',
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'duyfxtcdd',
-  };
-};
+export const configEnv = envSchema.parse({
+  NODE_ENV: process.env.NODE_ENV,
+  API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  API_ONLY_BASE_URL: process.env.NEXT_PUBLIC_API_ONLY_BASE_URL,
+  BACKEND_SOCKET_BASEURL: process.env.NEXT_PUBLIC_BACKEND_SOCKET_BASEURL,
+});
 
-export const configEnv = {
-  private_academy_category_id: process.env.NEXT_PUBLIC_PRIVATE_ACADEMY_CATEGORY_ID,
-};
+export type Env = z.infer<typeof envSchema>;

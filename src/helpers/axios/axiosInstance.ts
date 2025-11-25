@@ -1,102 +1,128 @@
-import { authKey } from '@/constants/storageKey';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { ResponseSuccessType } from '@/types';
-import { getFromLocalStorage, setToLocalStorage } from '@/utils/local-storage';
-import axios from 'axios';
-import { getBaseUrl } from '../config/envConfig';
-// import { message } from 'antd';
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { configEnv } from "../config/envConfig";
+import { authKey } from "@/constants/storageKey";
+import { ResponseSuccessType } from "@/types";
 
+// ==============================
+// Safe AuthService (Client Only)
+// ==============================
+class SafeAuthService {
+  setToken(key: string, value: string): void {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(key, value);
+  }
+
+  getToken(key: string): string | null {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(key);
+  }
+
+  removeToken(key: string): void {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem(key);
+  }
+
+  decodeToken<T>(token: string | null): T | null {
+    try {
+      if (!token) return null;
+      return jwtDecode<T>(token);
+    } catch {
+      return null;
+    }
+  }
+}
+
+// Singleton but only on client
+let authService: SafeAuthService | null = null;
+
+function getAuthService() {
+  if (typeof window === "undefined") return null;
+  if (!authService) authService = new SafeAuthService();
+  return authService;
+}
+
+// ==============================
+// Axios Instance
+// ==============================
 const instance = axios.create();
-instance.defaults.headers.post['Content-Type'] = 'application/json';
-instance.defaults.headers['Accept'] = 'application/json';
+
+instance.defaults.headers.post["Content-Type"] = "application/json";
+instance.defaults.headers["Accept"] = "application/json";
 instance.defaults.timeout = 60000;
 
-// Add a request interceptor
+// ==============================
+// Request Interceptor
+// ==============================
 instance.interceptors.request.use(
-  function (config) {
-    // Do something before request is sent
-    const accessToken = getFromLocalStorage(authKey);
-    if (accessToken) {
-      config.headers.Authorization = accessToken;
+  (config) => {
+    const auth = getAuthService();
+    const token = auth?.getToken(authKey);
+
+    if (token) {
+      config.headers.Authorization = token;
     }
 
     return config;
   },
-  function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error)
 );
 
-// Add a response interceptor
+// ==============================
+// Response Interceptor
+// ==============================
 instance.interceptors.response.use(
   //@ts-ignore
-  function (response) {
-    //// console.log("🚀 ~ response:", response)
-    const responseObject: ResponseSuccessType = {
+  (response) => {
+    return {
       data: response?.data?.data,
       meta: response?.data?.meta,
-      // success:response?.data?.success,
-    };
-    return responseObject;
+    } as ResponseSuccessType;
   },
 
-  async function (error) {
+  async (error) => {
     const config = error?.config;
 
+    // Handle 401 (Token Expired)
     if (error?.response?.status === 401 && !config?._retry) {
       config._retry = true;
-      try {
-        // const response = await getRefreshToken();
-        // const accessToken = response?.data?.accessToken;
-        const response = await axios.post(
-          `${getBaseUrl()}/auth/refresh-token`,
-          {},
-          { withCredentials: true },
-        );
-        const accessToken = response?.data?.data?.accessToken;
-        // axios.defaults.headers.common['Authorization'] = accessToken;
-        config.headers['Authorization'] = accessToken;
-        setToLocalStorage(authKey, accessToken);
-        return instance(config);
-      } catch (error: any) {
-        // removeUserInfo(authKey);
-        localStorage.clear();
-        window.location.href = '/login';
-        return Promise.reject(error?.response?.data);
-      }
-    } else {
-      /*
-       if (
-        error?.response?.status === 403 ||
-        error?.response?.data?.message ===
-          "Validation Error:-> refreshToken : Refresh Token is required"
-      ) {
-        removeUserInfo(authKey);
-        window.location.href = "/login";
-      } 
-    */
-      const responseObject: any = {
-        statusCode: error?.response?.status || 500,
-        message: 'Something went wrong',
-        success: false,
-        errorMessages: [],
-      };
-      // Check if the error response has the expected structure
-      if (error?.response?.data) {
-        responseObject.message = error?.response?.data?.message || responseObject.message;
-        responseObject.success = error?.response?.data?.success || responseObject.success;
 
-        if (error?.response?.data?.errorMessage) {
-          responseObject.errorMessages.push(error?.response?.data?.errorMessage);
-        }
+      try {
+        // Refresh token API
+        const response = await axios.post(
+          `${configEnv.API_BASE_URL}/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
+
+        const newToken = response?.data?.data?.accessToken;
+
+        const auth = getAuthService();
+        auth?.setToken(authKey, newToken);
+
+        config.headers["Authorization"] = newToken;
+
+        return instance(config);
+      } catch (refreshErr: any) {
+        localStorage.clear();
+        window.location.href = "/login";
+        return Promise.reject(refreshErr?.response?.data);
       }
-      return Promise.reject(responseObject);
-      // return responseObject;
     }
 
-    // return Promise.reject(error);
-  },
+    // Generic error formatting
+    const responseObject: any = {
+      statusCode: error?.response?.status || 500,
+      message: error?.response?.data?.message || "Something went wrong",
+      success: false,
+      errorMessages: [],
+    };
+
+    return Promise.reject(responseObject);
+  }
 );
 
 export { instance };

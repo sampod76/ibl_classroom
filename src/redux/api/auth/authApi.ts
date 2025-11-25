@@ -1,30 +1,32 @@
-import { tagTypes } from '../../tag-types';
-import { baseApi } from '../baseApi';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { tagTypes } from "../../tag-types";
+import { baseApi } from "../baseApi";
 
-const AUTH_URL = '/auth';
+const AUTH_URL = "/auth";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     userLogin: build.mutation({
       query: (loginData) => ({
         url: `${AUTH_URL}/login`,
-        method: 'POST',
-        data: loginData,
+        method: "POST",
+        body: loginData,
       }),
+
       invalidatesTags: [tagTypes.LoginHistory],
     }),
     changePassword: build.mutation({
       query: (data) => ({
-        url: '/auth/change-password',
-        method: 'POST',
-        data: data,
+        url: "/auth/change-password",
+        method: "POST",
+        body: data,
       }),
     }),
     userLogOut: build.mutation({
-      query: ({ id, data }) => ({
+      query: ({ id }) => ({
         url: `${AUTH_URL}/log-out-history/${id}`,
-        method: 'POST',
-        data: {},
+        method: "POST",
+        body: {},
         withCredentials: true,
       }),
       invalidatesTags: [tagTypes.LoginHistory],
@@ -32,31 +34,31 @@ export const authApi = baseApi.injectEndpoints({
     getProfile: build.query({
       query: () => ({
         url: `${AUTH_URL}/profile`,
-        method: 'GET',
+        method: "GET",
       }),
       providesTags: [tagTypes.profile],
     }),
     updateRole: build.mutation({
-      query: (data) => ({
+      query: (data: { id: string; body: Record<string, any> }) => ({
         url: `/users/update-role/${data.id}`,
-        method: 'PATCH',
-        data: data.body,
+        method: "PATCH",
+        body: data.body,
       }),
       invalidatesTags: [tagTypes.profile],
     }),
     forgetPassword: build.mutation({
       query: (data) => ({
         url: `${AUTH_URL}/forgot-password`,
-        method: 'POST',
-        data: data,
+        method: "POST",
+        body: data,
       }),
       invalidatesTags: [tagTypes.profile],
     }),
     resetPassword: build.mutation({
       query: (data) => ({
         url: `${AUTH_URL}/reset-password`,
-        method: 'POST',
-        data: data,
+        method: "POST",
+        body: data,
       }),
       invalidatesTags: [tagTypes.profile],
     }),
