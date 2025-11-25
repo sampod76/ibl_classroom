@@ -80,10 +80,10 @@ export function ClassworkPage({
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end" className="w-56">
-              {/* <DropdownMenuItem onClick={() => setOpenAssignment(true)}>
+              <DropdownMenuItem onClick={() => setOpenAssignment(true)}>
                 <ClipboardList className="mr-2 h-4 w-4" />
                 <span>Assignment</span>
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
 
               <DropdownMenuItem onClick={() => setOpenLectureNotes(true)}>
                 <FileText className="mr-2 h-4 w-4" />
