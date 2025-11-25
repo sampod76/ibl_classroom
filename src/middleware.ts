@@ -9,7 +9,7 @@ const roleBasedAccess: { [key: string]: string[] } = {
   "/dashboard/student": ["student"],
 };
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
   // --------------------------------------
