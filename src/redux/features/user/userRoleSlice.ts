@@ -60,6 +60,7 @@ export const userRoleSlice = createSlice({
       state.isLoading = false;
       state.isError = false;
       state.isLogout = true;
+      localStorage.clear();
     },
   },
 });

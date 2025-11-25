@@ -68,7 +68,7 @@ export default function DashboardSidebar({
         style={{
           background: "transparent", // match gray bg
         }}
-        items={dashboardItems(userInfo.role, setCollapsed)}
+        items={dashboardItems(userInfo?.role, setCollapsed)}
       />
     </Sider>
   );

@@ -13,12 +13,16 @@ import { configEnv } from "@/helpers/config/envConfig";
 import { logout, setUserRole } from "../features/user/userRoleSlice";
 import { RootState } from "../store";
 import { signoutSession } from "@/lib/auth_server";
+import { AuthService } from "@/utils/local-storage";
+import { toast } from "sonner";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: configEnv.API_BASE_URL,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).userInfo?.data?.accessToken;
+    // const token = (getState() as RootState).userInfo?.data?.accessToken;
+    const token = new AuthService().getAccessToken();
+    console.log("🚀 ~ token:", token);
 
     if (token) {
       headers.set("authorization", `${token}`);
@@ -37,7 +41,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 
   if (result?.error?.status !== 401) {
     //@ts-ignore
-    toast.error(result?.error?.data?.message);
+    toast.error(result?.error?.data?.message as string);
   }
   // if (result?.error?.status === 403) {
   //   toast.error(result?.error?.data.message);

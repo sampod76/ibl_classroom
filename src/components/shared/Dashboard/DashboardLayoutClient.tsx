@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -19,6 +20,7 @@ export default function DashboardLayoutClient({
   children: React.ReactNode;
 }) {
   const { data, isLoading } = useAppSelector((state) => state.userInfo);
+
   const screens = useBreakpoint();
 
   const [collapsed, setCollapsed] = useState(false);
@@ -58,7 +60,7 @@ export default function DashboardLayoutClient({
           <Menu
             theme="light"
             mode="inline"
-            items={dashboardItems(userInfo.role!, setCollapsed)}
+            items={dashboardItems(userInfo?.role as any, setCollapsed)}
           />
         </Drawer>
       ) : (

@@ -9,13 +9,14 @@ const roleBasedAccess: { [key: string]: string[] } = {
   "/dashboard/student": ["student"],
 };
 
-export async function proxy(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
   // --------------------------------------
   // 1. Receive ct token from query (?ct=)
   // --------------------------------------
   const ct = searchParams.get("ct");
+  console.log("🚀 ~ middleware ~ ct:", ct);
 
   if (ct) {
     // Save cookie
@@ -43,6 +44,7 @@ export async function proxy(req: NextRequest) {
   if (cookie) {
     try {
       session = await decrypt(cookie);
+      console.log("🚀 ~ middleware ~ session:", session);
     } catch (err) {
       console.log("❌ Token decode failed:", err);
     }
@@ -65,10 +67,11 @@ export async function proxy(req: NextRequest) {
   if (session?.id && pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL("/", req.url));
   }
+  console.log("🚀 ~ middleware ~ session:", session);
   if (session?.id && pathname === "/dashboard") {
     return NextResponse.redirect(
       new URL(
-        `/dashboard/${session.role == "seller" ? "teacher" : session.role}`,
+        `/dashboard/${session.role === "seller" ? "teacher" : session.role}`,
         req.url
       )
     );
@@ -83,8 +86,8 @@ export async function proxy(req: NextRequest) {
 
   if (restricted) {
     const allowedRoles = roleBasedAccess[restricted];
-
-    if (!allowedRoles.includes(session.role)) {
+    const role = session.role === "seller" ? "teacher" : session.role;
+    if (!allowedRoles.includes(role)) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }

@@ -11,7 +11,7 @@ import { MdAssignment } from "react-icons/md";
 import { USER_ROLE } from "./role";
 
 export const dashboardItems = (
-  role: keyof typeof USER_ROLE,
+  role?: keyof typeof USER_ROLE,
   setCollapsed?: any
 ) => {
   const safeRole = role === USER_ROLE.seller ? USER_ROLE.teacher : role;

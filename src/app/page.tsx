@@ -1,12 +1,31 @@
 "use client";
-import { UserState } from "@/redux/features/user/userRoleSlice";
-import { useAppSelector } from "@/redux/hooks";
-import { AuthService } from "@/utils/local-storage";
-import Image from "next/image";
+
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { AuthService } from "@/utils/local-storage";
+import { authKey } from "@/constants/storageKey";
+import { getSession } from "@/lib/session";
 
 export default function Home() {
   const router = useRouter();
-  return router.replace("/dashboard");
+
+  useEffect(() => {
+    const redirectUser = async () => {
+      const { user } = await getSession();
+      console.log("🚀 ~ redirectUser ~ user:", user);
+
+      if (user?.role) {
+        const role = user.role === "seller" ? "teacher" : user.role;
+        console.log("🚀 ~ redirectUser ~ role:", role);
+
+        router.replace(`/dashboard/${role}`);
+      } else {
+        router.replace("/auth/login");
+      }
+    };
+
+    redirectUser();
+  }, [router]);
+
+  return null;
 }

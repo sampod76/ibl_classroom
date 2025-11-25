@@ -10,7 +10,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
+  // const session = await getSession();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -19,7 +19,7 @@ export default async function RootLayout({
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <Providers>
-          <SessionProvider initialSession={session}>{children}</SessionProvider>
+          <SessionProvider>{children}</SessionProvider>
           <Toaster richColors position="top-center" />
         </Providers>
       </body>

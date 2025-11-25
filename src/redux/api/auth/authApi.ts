@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { tagTypes } from "../../tag-types";
 import { baseApi } from "../baseApi";
 
@@ -9,22 +10,23 @@ export const authApi = baseApi.injectEndpoints({
       query: (loginData) => ({
         url: `${AUTH_URL}/login`,
         method: "POST",
-        data: loginData,
+        body: loginData,
       }),
+
       invalidatesTags: [tagTypes.LoginHistory],
     }),
     changePassword: build.mutation({
       query: (data) => ({
         url: "/auth/change-password",
         method: "POST",
-        data: data,
+        body: data,
       }),
     }),
     userLogOut: build.mutation({
       query: ({ id }) => ({
         url: `${AUTH_URL}/log-out-history/${id}`,
         method: "POST",
-        data: {},
+        body: {},
         withCredentials: true,
       }),
       invalidatesTags: [tagTypes.LoginHistory],
@@ -37,10 +39,10 @@ export const authApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.profile],
     }),
     updateRole: build.mutation({
-      query: (data) => ({
+      query: (data: { id: string; body: Record<string, any> }) => ({
         url: `/users/update-role/${data.id}`,
         method: "PATCH",
-        data: data.body,
+        body: data.body,
       }),
       invalidatesTags: [tagTypes.profile],
     }),
@@ -48,7 +50,7 @@ export const authApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: `${AUTH_URL}/forgot-password`,
         method: "POST",
-        data: data,
+        body: data,
       }),
       invalidatesTags: [tagTypes.profile],
     }),
@@ -56,7 +58,7 @@ export const authApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: `${AUTH_URL}/reset-password`,
         method: "POST",
-        data: data,
+        body: data,
       }),
       invalidatesTags: [tagTypes.profile],
     }),

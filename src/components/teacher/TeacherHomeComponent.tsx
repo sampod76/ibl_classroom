@@ -39,14 +39,24 @@ export default function TeacherHomeComponent() {
             <Button
               variant={userRole === "student" ? "default" : "outline"}
               size="sm"
-              onClick={() => setUserRole("student")}
+              onClick={() => {
+                setUserRole("student");
+                router.push(
+                  `/dashboard?ct=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbXBvZG5hdGhuYXJpYWl0QGdtYWlsLmNvbSIsInJvbGUiOiJzdHVkZW50IiwiaWQiOiI2ODYyYmM0ZDUzZDE4YWQ5NzU2NjA0Y2YiLCJyb2xlQmFzZVVzZXJJZCI6IjY4NjJiYzRkNTNkMThhZDk3NTY2MDRjYyIsInVzZXJJZCI6IjY4NjJiYzRkNTNkMThhZDk3NTY2MDRjZiIsImlhdCI6MTc2Mzk2NjY1NSwiZXhwIjoxNzk1NTAyNjU1fQ.E16ZfTxEqYA6t8afbToOt3yE8Ec2eKwc0SCu3TB4Exc`
+                );
+              }}
             >
               Student View
             </Button>
             <Button
               variant={userRole === "teacher" ? "default" : "outline"}
               size="sm"
-              onClick={() => setUserRole("teacher")}
+              onClick={() => {
+                setUserRole("teacher");
+                router.push(
+                  `/dashboard?ct=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbXBvZG5hdGg3NkBnbWFpbC5jb20iLCJyb2xlIjoic2VsbGVyIiwiaWQiOiI2NzJkNTA1YWRlZmViZjc2ZTZhMmY3YWQiLCJyb2xlQmFzZVVzZXJJZCI6IjY3MmQ1MDVhZGVmZWJmNzZlNmEyZjdhYSIsInVzZXJJZCI6IjY3MmQ1MDVhZGVmZWJmNzZlNmEyZjdhZCIsImlhdCI6MTc2NDAwODYyMiwiZXhwIjoxNzk1NTQ0NjIyfQ.3eFWo15FoiWv3v4s9v8_qytVBQggwQsohpy6L7LzK1E`
+                );
+              }}
             >
               Teacher View
             </Button>
