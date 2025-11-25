@@ -1,12 +1,32 @@
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { FileText, Paperclip, MessageSquare, MoreVertical, Clock, Upload, Plus, Edit, Trash2 } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  FileText,
+  Paperclip,
+  MessageSquare,
+  MoreVertical,
+  Clock,
+  Upload,
+  Plus,
+  Edit,
+  Trash2,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { USER_ROLE } from "@/constants/role";
 
-export function ClassroomStream({ userRole = "student" }: { userRole?: "student" | "teacher" }) {
+export function ClassroomStream({
+  userRole = "student",
+}: {
+  userRole?: keyof typeof USER_ROLE;
+}) {
   return (
     <main className="space-y-4">
       {/* Announcement Card */}
@@ -19,7 +39,9 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
             <div className="flex-1">
               <Input
                 placeholder={
-                  userRole === "teacher" ? "Announce something to your class..." : "Share something with your class..."
+                  userRole === "teacher"
+                    ? "Announce something to your class..."
+                    : "Share something with your class..."
                 }
                 className="bg-card"
               />
@@ -53,8 +75,12 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
               </div>
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-foreground">Prof. Johnson</span>
-                  <span className="text-xs text-muted-foreground">posted a new assignment</span>
+                  <span className="text-sm font-medium text-foreground">
+                    Prof. Johnson
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    posted a new assignment
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground">2 hours ago</p>
               </div>
@@ -83,10 +109,13 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
 
           <div className="mt-4 space-y-3">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Chapter 5: Calculus Assignment</h3>
+              <h3 className="text-lg font-semibold text-foreground">
+                Chapter 5: Calculus Assignment
+              </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Complete problems 1-15 from Chapter 5. Show all work and explain your reasoning. Submit your solutions
-                as a PDF through the assignment link below.
+                Complete problems 1-15 from Chapter 5. Show all work and explain
+                your reasoning. Submit your solutions as a PDF through the
+                assignment link below.
               </p>
             </div>
 
@@ -104,7 +133,9 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
                   <FileText className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-foreground">Chapter_5_Problems.pdf</p>
+                  <p className="text-sm font-medium text-foreground">
+                    Chapter_5_Problems.pdf
+                  </p>
                   <p className="text-xs text-muted-foreground">1.2 MB</p>
                 </div>
                 <Button variant="ghost" size="sm">
@@ -151,11 +182,15 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4">
               <Avatar className="h-10 w-10">
-                <AvatarFallback className="bg-primary text-primary-foreground">PJ</AvatarFallback>
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  PJ
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-foreground">Prof. Johnson</span>
+                  <span className="text-sm font-medium text-foreground">
+                    Prof. Johnson
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground">1 day ago</p>
               </div>
@@ -207,8 +242,12 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
               </div>
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-foreground">Prof. Johnson</span>
-                  <span className="text-xs text-muted-foreground">posted new material</span>
+                  <span className="text-sm font-medium text-foreground">
+                    Prof. Johnson
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    posted new material
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground">3 days ago</p>
               </div>
@@ -216,7 +255,9 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
           </div>
 
           <div className="mt-4 space-y-3">
-            <h3 className="text-base font-semibold text-foreground">Week 7 Lecture Notes</h3>
+            <h3 className="text-base font-semibold text-foreground">
+              Week 7 Lecture Notes
+            </h3>
 
             <div className="space-y-2">
               <div className="rounded-lg border border-border bg-card p-3">
@@ -225,7 +266,9 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
                     <FileText className="h-4 w-4 text-accent" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">Derivatives_Advanced.pdf</p>
+                    <p className="text-sm font-medium text-foreground">
+                      Derivatives_Advanced.pdf
+                    </p>
                     <p className="text-xs text-muted-foreground">856 KB</p>
                   </div>
                   <Button variant="ghost" size="sm">
@@ -240,7 +283,9 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
                     <FileText className="h-4 w-4 text-accent" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">Practice_Problems.pdf</p>
+                    <p className="text-sm font-medium text-foreground">
+                      Practice_Problems.pdf
+                    </p>
                     <p className="text-xs text-muted-foreground">1.1 MB</p>
                   </div>
                   <Button variant="ghost" size="sm">
@@ -253,5 +298,5 @@ export function ClassroomStream({ userRole = "student" }: { userRole?: "student"
         </div>
       </Card>
     </main>
-  )
+  );
 }

@@ -12,7 +12,6 @@ export default function Home() {
   useEffect(() => {
     const redirectUser = async () => {
       const { user } = await getSession();
-      console.log("🚀 ~ redirectUser ~ user:", user);
 
       if (user?.role) {
         const role = user.role === "seller" ? "teacher" : user.role;

@@ -11,8 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { USER_ROLE } from "@/constants/role";
 
-export function PeoplePage({ userRole }: { userRole: "student" | "teacher" }) {
+export function PeoplePage({ userRole }: { userRole: keyof typeof USER_ROLE }) {
   console.log(userRole);
   const teachers = [
     {

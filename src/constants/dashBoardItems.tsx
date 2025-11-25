@@ -19,11 +19,26 @@ export const dashboardItems = (
   const defaultSidebarItems: MenuProps["items"] = [
     {
       label: (
-        <Link onClick={() => setCollapsed?.(false)} href="/dashboard">
+        <Link
+          onClick={() => setCollapsed?.(false)}
+          href={`/dashboard/${safeRole}`}
+        >
           Dashboard
         </Link>
       ),
       key: "/dashboard",
+      icon: <HomeOutlined />,
+    },
+    {
+      label: (
+        <Link
+          onClick={() => setCollapsed?.(false)}
+          href={`/dashboard/${safeRole}/classroom`}
+        >
+          Classroom
+        </Link>
+      ),
+      key: "/classroom",
       icon: <HomeOutlined />,
     },
   ];

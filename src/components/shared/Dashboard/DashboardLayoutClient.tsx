@@ -11,6 +11,7 @@ import { useAppSelector } from "@/redux/hooks";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardNavBar from "./DashboardNavbar";
 import { UserState } from "@/redux/features/user/userRoleSlice";
+import { LoadingSkeleton } from "@/components/ui/skeleton";
 
 const { Content } = Layout;
 
@@ -26,18 +27,7 @@ export default function DashboardLayoutClient({
   const [collapsed, setCollapsed] = useState(false);
 
   if (isLoading) {
-    return (
-      <div
-        style={{
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Spin size="large" />
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   const userInfo = data as UserState;

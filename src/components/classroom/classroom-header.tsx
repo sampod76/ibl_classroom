@@ -17,11 +17,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { USER_ROLE } from "@/constants/role";
 
 export function ClassroomHeader({
   userRole = "student",
 }: {
-  userRole?: "student" | "teacher";
+  userRole?: keyof typeof USER_ROLE;
 }) {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("activeTab") || "stream";
@@ -72,7 +73,7 @@ export function ClassroomHeader({
         </div>
 
         <nav className="flex gap-6 border-t border-border">
-          <button
+          {/* <button
             onClick={() => handleQueryChange("activeTab", "stream")}
             className={`border-b-2 py-3 text-sm font-medium ${
               activeTab === "stream"
@@ -81,7 +82,7 @@ export function ClassroomHeader({
             }`}
           >
             Stream
-          </button>
+          </button> */}
           <button
             onClick={() => handleQueryChange("activeTab", "classwork")}
             className={`border-b-2 py-3 text-sm font-medium ${

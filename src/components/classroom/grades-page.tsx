@@ -1,6 +1,6 @@
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   TrendingUp,
   Download,
@@ -12,11 +12,22 @@ import {
   Edit,
   BarChart3,
   Filter,
-} from "lucide-react"
-import { Progress } from "@/components/ui/progress"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { USER_ROLE } from "@/constants/role";
 
-export function GradesPage({ userRole = "student" }: { userRole?: "student" | "teacher" }) {
+export function GradesPage({
+  userRole = "student",
+}: {
+  userRole?: keyof typeof USER_ROLE;
+}) {
   const grades = [
     {
       title: "Integration by Parts Assignment",
@@ -72,11 +83,16 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
       status: "graded",
       weight: "5%",
     },
-  ]
+  ];
 
-  const totalScore = grades.filter((g) => g.score !== null).reduce((acc, g) => acc + g.score!, 0)
-  const totalPossible = grades.filter((g) => g.score !== null).reduce((acc, g) => acc + g.maxScore, 0)
-  const overallPercentage = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0
+  const totalScore = grades
+    .filter((g) => g.score !== null)
+    .reduce((acc, g) => acc + g.score!, 0);
+  const totalPossible = grades
+    .filter((g) => g.score !== null)
+    .reduce((acc, g) => acc + g.maxScore, 0);
+  const overallPercentage =
+    totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -96,9 +112,13 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
           <Card className="mb-6 p-6">
             <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <p className="mb-2 text-sm font-medium text-muted-foreground">Overall Grade</p>
+                <p className="mb-2 text-sm font-medium text-muted-foreground">
+                  Overall Grade
+                </p>
                 <div className="mb-3 flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-foreground">{overallPercentage}%</span>
+                  <span className="text-4xl font-bold text-foreground">
+                    {overallPercentage}%
+                  </span>
                   <Badge variant="secondary" className="gap-1">
                     <TrendingUp className="h-3 w-3" />
                     A-
@@ -112,7 +132,9 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Assignments</span>
+                  <span className="text-sm text-muted-foreground">
+                    Assignments
+                  </span>
                   <span className="font-semibold text-foreground">94%</span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -120,7 +142,9 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                   <span className="font-semibold text-foreground">88%</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Participation</span>
+                  <span className="text-sm text-muted-foreground">
+                    Participation
+                  </span>
                   <span className="font-semibold text-foreground">100%</span>
                 </div>
               </div>
@@ -166,7 +190,11 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </div>
               <p className="mt-2 text-3xl font-bold text-destructive">8</p>
-              <Button variant="link" size="sm" className="mt-1 h-auto p-0 text-xs">
+              <Button
+                variant="link"
+                size="sm"
+                className="mt-1 h-auto p-0 text-xs"
+              >
                 Grade now
               </Button>
             </Card>
@@ -177,7 +205,9 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                 <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
               </div>
               <p className="mt-2 text-3xl font-bold text-accent">94%</p>
-              <p className="mt-2 text-xs text-muted-foreground">On-time submissions</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                On-time submissions
+              </p>
             </Card>
           </div>
 
@@ -210,7 +240,10 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                 </SelectContent>
               </Select>
 
-              <Button variant="outline" className="gap-2 sm:ml-auto bg-transparent">
+              <Button
+                variant="outline"
+                className="gap-2 sm:ml-auto bg-transparent"
+              >
                 <Download className="h-4 w-4" />
                 Export Grades
               </Button>
@@ -221,7 +254,9 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
 
       {/* Grading Categories */}
       <Card className="mb-6 p-6">
-        <h3 className="mb-4 text-lg font-semibold text-foreground">Grading System</h3>
+        <h3 className="mb-4 text-lg font-semibold text-foreground">
+          Grading System
+        </h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg border border-border p-4">
             <p className="text-sm text-muted-foreground">Assignments</p>
@@ -261,10 +296,10 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                       grade.status === "pending"
                         ? "bg-muted"
                         : grade.score && grade.score >= 90
-                          ? "bg-accent/10"
-                          : grade.score && grade.score >= 80
-                            ? "bg-primary/10"
-                            : "bg-destructive/10"
+                        ? "bg-accent/10"
+                        : grade.score && grade.score >= 80
+                        ? "bg-primary/10"
+                        : "bg-destructive/10"
                     }`}
                   >
                     {grade.status === "pending" ? (
@@ -279,7 +314,9 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                   </div>
                   <div className="flex-1">
                     <div className="mb-1 flex items-start justify-between gap-4">
-                      <h4 className="font-semibold text-foreground">{grade.title}</h4>
+                      <h4 className="font-semibold text-foreground">
+                        {grade.title}
+                      </h4>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                       <Badge variant="outline" className="text-xs">
@@ -296,7 +333,10 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                             {grade.score}/{grade.maxScore}
                           </span>
                         </div>
-                        <Progress value={(grade.score / grade.maxScore) * 100} className="h-1.5" />
+                        <Progress
+                          value={(grade.score / grade.maxScore) * 100}
+                          className="h-1.5"
+                        />
                       </div>
                     )}
                   </div>
@@ -316,10 +356,22 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                           {Math.round((grade.score / grade.maxScore) * 100)}%
                         </div>
                         <Badge
-                          variant={grade.score >= 90 ? "default" : grade.score >= 80 ? "secondary" : "destructive"}
+                          variant={
+                            grade.score >= 90
+                              ? "default"
+                              : grade.score >= 80
+                              ? "secondary"
+                              : "destructive"
+                          }
                           className="mt-1"
                         >
-                          {grade.score >= 90 ? "A" : grade.score >= 80 ? "B" : grade.score >= 70 ? "C" : "D"}
+                          {grade.score >= 90
+                            ? "A"
+                            : grade.score >= 80
+                            ? "B"
+                            : grade.score >= 70
+                            ? "C"
+                            : "D"}
                         </Badge>
                       </div>
                     )
@@ -340,7 +392,11 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
                     </>
                   ) : (
                     <>
-                      <Button size="sm" variant="outline" className="gap-2 bg-transparent">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-2 bg-transparent"
+                      >
                         <Users className="h-4 w-4" />
                         View Submissions (32/32)
                       </Button>
@@ -359,5 +415,5 @@ export function GradesPage({ userRole = "student" }: { userRole?: "student" | "t
         </div>
       </div>
     </div>
-  )
+  );
 }

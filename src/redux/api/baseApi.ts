@@ -22,7 +22,6 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     // const token = (getState() as RootState).userInfo?.data?.accessToken;
     const token = new AuthService().getAccessToken();
-    console.log("🚀 ~ token:", token);
 
     if (token) {
       headers.set("authorization", `${token}`);

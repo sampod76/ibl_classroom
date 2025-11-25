@@ -1,12 +1,13 @@
 "use client";
 
 import DashboardLayoutClient from "@/components/shared/Dashboard/DashboardLayoutClient";
+import { LoadingSkeleton } from "@/components/ui/skeleton";
 import { authKey } from "@/constants/storageKey";
 import { getSession } from "@/lib/session";
 import { setUserRole } from "@/redux/features/user/userRoleSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { AuthService } from "@/utils/local-storage";
-import { Spin } from "antd";
+
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -55,7 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   //   }
   // }, [isLogout]);
   if (isLoading) {
-    return <Spin></Spin>;
+    return <LoadingSkeleton></LoadingSkeleton>;
   }
 
   return <DashboardLayoutClient>{children}</DashboardLayoutClient>;

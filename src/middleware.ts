@@ -16,7 +16,6 @@ export async function middleware(req: NextRequest) {
   // 1. Receive ct token from query (?ct=)
   // --------------------------------------
   const ct = searchParams.get("ct");
-  console.log("🚀 ~ middleware ~ ct:", ct);
 
   if (ct) {
     // Save cookie
@@ -44,7 +43,6 @@ export async function middleware(req: NextRequest) {
   if (cookie) {
     try {
       session = await decrypt(cookie);
-      console.log("🚀 ~ middleware ~ session:", session);
     } catch (err) {
       console.log("❌ Token decode failed:", err);
     }
@@ -67,7 +65,7 @@ export async function middleware(req: NextRequest) {
   if (session?.id && pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL("/", req.url));
   }
-  console.log("🚀 ~ middleware ~ session:", session);
+
   if (session?.id && pathname === "/dashboard") {
     return NextResponse.redirect(
       new URL(
