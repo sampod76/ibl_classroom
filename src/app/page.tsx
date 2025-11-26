@@ -15,11 +15,10 @@ export default function Home() {
 
       if (user?.role) {
         const role = user.role === "seller" ? "teacher" : user.role;
-        console.log("🚀 ~ redirectUser ~ role:", role);
 
         router.replace(`/dashboard/${role}`);
       } else {
-        router.replace("/auth/login");
+        router.replace("/login");
       }
     };
 
