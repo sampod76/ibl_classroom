@@ -35,28 +35,4 @@ jobs:
           # If your deploy sometimes takes longer, adjust this:
           command_timeout: 30m
           script: |
-            set -Eeuo pipefail
-
-            echo "✅ Connected to server successfully."
-            APP_DIR="/home/sampod/apps/ibl_classroom"
-            LOCK_FILE="/tmp/ibl_classroom.lock"
-
-            echo "📁 Changing to dashboard directory..."
-            cd "$APP_DIR"
-
-            echo "🔧 Making deploy script executable..."
-            chmod +x deploy_client.sh
-
-            # 🔒 Server-side lock to prevent overlapping deploys (defense-in-depth)
-            if command -v flock >/dev/null 2>&1; then
-              echo "🔒 Using flock lock: $LOCK_FILE"
-              flock -n "$LOCK_FILE" bash -c '
-                set -Eeuo pipefail
-                ./deploy_client.sh
-              '
-            else
-              echo "⚠️ util-linux (flock) not found; running without lock."
-              ./deploy_client.sh
-            fi
-
-            echo "🎉 Deployment completed successfully"
+            bash /home/sampod/apps/ibl_classroom/deploy_client.sh

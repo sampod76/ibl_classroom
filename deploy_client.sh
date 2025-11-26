@@ -9,43 +9,11 @@ PROJECT_NAME="ibl_classroom"   # optional
 COPY_ENV=true                     # .env.production -> .env.local
 RELOAD_NGINX=false                # set true if you really want to reload
 
-# ========= Better trap (show failing command) =========
-trap 'code=$?; echo "❌ Failed at line $LINENO: $BASH_COMMAND (exit $code)" >&2; exit $code' ERR
 
-log()  { printf "%s %s\n" "$(date '+%F %T')" "$*"; }
-fail() { echo "❌ $*" >&2; exit 1; }
 
-# ========= Docker Compose binary detect =========
-if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
-  DC="docker compose"
-elif command -v docker-compose >/dev/null 2>&1; then
-  DC="docker-compose"
-else
-  fail "docker compose/docker-compose not found"
-fi
-
-# ========= Start =========
-log "=============================="
-log "🚀 Starting client Deployment"
-log "=============================="
-
-# 0) SSH/Git sanity (avoid host key prompt + ensure config used)
-mkdir -p ~/.ssh
-chmod 700 ~/.ssh
-# Make sure github.com host key is known (idempotent)
-ssh-keygen -F github.com >/dev/null || ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-chmod 644 ~/.ssh/known_hosts
-
-# 1) Go to app dir
-[ -d "$APP_DIR" ] || fail "APP_DIR not found: $APP_DIR"
 cd "$APP_DIR"
 
-# 1.1) Mark safe worktree (if different user/CI)
-git config --global --add safe.directory "$APP_DIR" || true
 
-# 1.2) Show current remote (helps debug wrong host alias)
-log "Git remote:"
-git remote -v || true
 
 # 1.3) Stronger pull (avoids merge/lock issues)
 log "[1/4] Pull latest from origin/$BRANCH (fetch + hard reset)…"
