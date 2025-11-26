@@ -59,4 +59,4 @@ jobs:
               ./deploy_client.sh
             fi
 
-            echo "🎉 Deployment completed successfully!"
+            echo "🎉 Deployment completed successfully"
