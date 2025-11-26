@@ -1,38 +1,62 @@
-name: Frontend_classroom
+name: ibl_classroom
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
+
+# ✅ One deploy at a time per branch; newer runs cancel older ones
+concurrency:
+  group: ibl_classroom:${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
-    name: Deploy Frontend_classroom
-    runs-on: self-hosted
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
 
     steps:
-      - name: Checkout code
+      - name: 🧠 Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      # ✅ Install PNPM if not installed
-      - name: Ensure PNPM is installed
-        run: |
-          if ! command -v pnpm &> /dev/null; then
-            npm install -g pnpm
-          fi
+      - name: 🚀 Deploy to VPS (SSH Key-based)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script_stop: true
+          # If your deploy sometimes takes longer, adjust this:
+          command_timeout: 30m
+          script: |
+            set -Eeuo pipefail
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+            echo "✅ Connected to server successfully."
+            APP_DIR="/home/sampod/apps/ibl_classroom"
+            LOCK_FILE="/tmp/ibl_classroom.lock"
 
-      - name: Replace .env with .env.production
-        run: cp -f .env.production .env
+            echo "📁 Changing to dashboard directory..."
+            cd "$APP_DIR"
 
-      - name: Production build
-        run: NEXT_PUBLIC_ENV=production pnpm build
+            echo "🔧 Making deploy script executable..."
+            chmod +x deploy_client.sh
 
-      - name: Start/Restart frontend_classroom with PM2
-        run: |
-          if pm2 list | grep -q "frontend_classroom"; then
-            pm2 restart frontend_classroom
-          else
-            pm2 start pnpm --name "frontend_classroom" -- start
-          fi
+            # 🔒 Server-side lock to prevent overlapping deploys (defense-in-depth)
+            if command -v flock >/dev/null 2>&1; then
+              echo "🔒 Using flock lock: $LOCK_FILE"
+              flock -n "$LOCK_FILE" bash -c '
+                set -Eeuo pipefail
+                ./deploy_client.sh
+              '
+            else
+              echo "⚠️ util-linux (flock) not found; running without lock."
+              ./deploy_client.sh
+            fi
+
+            echo "🎉 Deployment completed successfully!"
