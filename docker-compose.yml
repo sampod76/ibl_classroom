@@ -1,5 +1,5 @@
 services:
-  classroom:
+  client_classroom:
     # Production build from your Dockerfile (runner stage)
     build:
       context: .

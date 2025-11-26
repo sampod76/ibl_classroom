@@ -4,7 +4,7 @@ set -Eeuo pipefail
 # ========= Config =========
 APP_DIR="/home/sampod/apps/ibl_classroom"
 BRANCH="main"
-SERVICE="client"                  # docker compose service name
+SERVICE="client_classroom"                  # docker compose service name
 PROJECT_NAME="ibl_classroom"   # optional
 COPY_ENV=true                     # .env.production -> .env.local
 RELOAD_NGINX=false                # set true if you really want to reload
