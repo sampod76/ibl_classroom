@@ -48,7 +48,7 @@ RUN pnpm build
 FROM node:22.18.0-slim AS runner
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
-    PORT=3005 \
+    PORT=3001 \
     HOSTNAME=0.0.0.0
 
 # Lightweight utils (curl for healthcheck) + PM2
@@ -75,7 +75,7 @@ RUN chmod +x ./docker-entry.sh
 # Drop privileges (image provides user "node")
 USER node
 
-EXPOSE 3005
+EXPOSE 3001
 
 # Use the deploy script as the container entrypoint
 ENTRYPOINT ["/app/docker-entry.sh"]
