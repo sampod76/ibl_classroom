@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy to VPS
+    name: Deploy to VPS dockers
     runs-on: ubuntu-latest
     timeout-minutes: 40
 
