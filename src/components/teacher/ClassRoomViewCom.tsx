@@ -50,8 +50,8 @@ export default function ClassRoomViewCom({
         {activeTab === "classwork" && (
           <ClassworkPage classRoomId={classRoomId} />
         )}
-        {activeTab === "people" && <PeoplePage />}
-        {activeTab === "grades" && <GradesPage />}
+        {activeTab === "people" && <PeoplePage classRoomId={classRoomId} />}
+        {activeTab === "grades" && <GradesPage classRoomId={classRoomId} />}
       </div>
     </div>
   );

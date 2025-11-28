@@ -60,8 +60,8 @@ export default function TutorialDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Google Meet Link</Label>
-            <Input placeholder="https://meet.google.com/xxx-xxxx-xxx" />
+            <Label>Meet Link</Label>
+            <Input placeholder="https://any-meeting-link/xxx-xxxx-xxx" />
           </div>
 
           <div className="flex justify-end gap-2">

@@ -1,3 +1,5 @@
+import { USER_ROLE } from "@/constants/role";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface IMeta {
   limit: number;
@@ -22,4 +24,10 @@ export type IGenericErrorResponse = {
 export type IGenericErrorMessage = {
   path: string | number;
   message: string;
+};
+
+export type IUserRef = {
+  role: keyof typeof USER_ROLE;
+  userId: string;
+  roleBaseUserId: string;
 };

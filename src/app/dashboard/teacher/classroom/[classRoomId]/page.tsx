@@ -1,4 +1,8 @@
+import AddSubjectInTeacher from "@/components/classroom/subjects/addSubject";
+import SubjectList from "@/components/classroom/subjects/subjectList";
+import ModalComponent from "@/components/modal/ModalComponents";
 import ClassRoomView from "@/components/teacher/ClassRoomViewCom";
+import { useGetAllAccessSubjectByTeacherQuery } from "@/redux/api/common/subjectApi";
 
 export default async function ClassRoomIdPage({
   params,
@@ -7,10 +11,27 @@ export default async function ClassRoomIdPage({
 }) {
   const { classRoomId } = await params;
 
+  // Subject List (Static for now)
+
   return (
-    <div>
-      {/* Class ID: {classRoomId} */}
-      <ClassRoomView classRoomId={classRoomId} />
+    <div
+      className="
+        flex flex-col 
+        md:flex-row           /* Desktop: row layout */
+        gap-4 md:gap-6 
+      "
+    >
+      {/* ===========================
+          LEFT SIDEBAR (TOP ON MOBILE)
+      ============================ */}
+      <SubjectList classRoomId={classRoomId} />
+
+      {/* ===========================
+          MAIN CONTENT (BOTTOM ON MOBILE)
+      ============================ */}
+      <div className="flex-1">
+        <ClassRoomView classRoomId={classRoomId} />
+      </div>
     </div>
   );
 }

@@ -59,7 +59,7 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
         </div>
 
         <nav className="flex gap-6 border-t border-border">
-          {/* <button
+          <button
             onClick={() => handleQueryChange("activeTab", "stream")}
             className={`border-b-2 py-3 text-sm font-medium ${
               activeTab === "stream"
@@ -68,7 +68,7 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
             }`}
           >
             Stream
-          </button> */}
+          </button>
           <button
             onClick={() => handleQueryChange("activeTab", "classwork")}
             className={`border-b-2 py-3 text-sm font-medium ${
