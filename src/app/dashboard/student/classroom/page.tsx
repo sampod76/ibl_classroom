@@ -1,4 +1,4 @@
-import TeacherHomeComponent from "@/components/teacher/TeacherHomeComponent";
+import TeacherHomeComponent from "@/components/teacher/ClassRoomViewCom";
 import React from "react";
 
 export default function ClassRoom() {

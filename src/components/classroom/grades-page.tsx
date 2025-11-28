@@ -22,12 +22,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { USER_ROLE } from "@/constants/role";
+import { useAppSelector } from "@/redux/hooks";
 
-export function GradesPage({
-  userRole = "student",
-}: {
-  userRole?: keyof typeof USER_ROLE;
-}) {
+export function GradesPage({ classRoomId }: { classRoomId: string }) {
+  const { data: UserData, isLoading: UserLoading } = useAppSelector(
+    (state) => state.userInfo
+  );
+
+  const userRole = UserData?.role == "seller" ? "teacher" : UserData?.role;
   const grades = [
     {
       title: "Integration by Parts Assignment",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Card } from "@/components/ui/card";
@@ -40,17 +41,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useAppSelector } from "@/redux/hooks";
 
 // ✅ New Components
 
-export function ClassworkPage({
-  userRole = "student",
-  classRoomId,
-}: {
-  userRole?: keyof typeof USER_ROLE;
-  classRoomId: string;
-}) {
-  const role = userRole === "seller" ? "teacher" : userRole;
+export function ClassworkPage({ classRoomId }: { classRoomId: string }) {
+  const { data: UserData, isLoading: UserLoading } = useAppSelector(
+    (state) => state.userInfo
+  );
+
+  const role = UserData?.role == "seller" ? "teacher" : UserData?.role;
 
   // ✅ Dialog States
   const [openAssignment, setOpenAssignment] = useState(false);
@@ -136,7 +136,7 @@ export function ClassworkPage({
       </div>
 
       {/* Topics and Assignments */}
-      <TopicList userRole={userRole} />
+      <TopicList userRole={role as any} />
     </div>
   );
 }

@@ -13,12 +13,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { USER_ROLE } from "@/constants/role";
+import { useAppSelector } from "@/redux/hooks";
 
-export function ClassroomSidebar({
-  userRole = "student",
-}: {
-  userRole?: keyof typeof USER_ROLE;
-}) {
+export function ClassroomSidebar({ classRoomId }: { classRoomId: string }) {
+  const { data: UserData, isLoading: UserLoading } = useAppSelector(
+    (state) => state.userInfo
+  );
+
+  const userRole = UserData?.role == "seller" ? "teacher" : UserData?.role;
   return (
     <aside className="space-y-4">
       {/* Class Code Card */}

@@ -12,8 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { USER_ROLE } from "@/constants/role";
+import { useAppSelector } from "@/redux/hooks";
 
-export function PeoplePage({ userRole }: { userRole: keyof typeof USER_ROLE }) {
+export function PeoplePage({ classRoomId }: { classRoomId: string }) {
+  const { data: UserData, isLoading: UserLoading } = useAppSelector(
+    (state) => state.userInfo
+  );
+
+  const userRole = UserData?.role == "seller" ? "teacher" : UserData?.role;
   console.log(userRole);
   const teachers = [
     {

@@ -63,6 +63,7 @@ export default function DashboardLayoutClient({
           marginLeft: screens.sm ? sidebarWidth : 0, // SHIFT CONTENT
           transition: "all 0.3s",
         }}
+        className=""
       >
         <DashboardNavBar collapsed={collapsed} setCollapsed={setCollapsed} />
 

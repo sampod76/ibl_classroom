@@ -1,4 +1,4 @@
-import TeacherHomeComponent from "@/components/teacher/TeacherHomeComponent";
+import ClassRoomView from "@/components/teacher/ClassRoomViewCom";
 
 export default async function ClassRoomIdPage({
   params,
@@ -7,12 +7,10 @@ export default async function ClassRoomIdPage({
 }) {
   const { classRoomId } = await params;
 
-  console.log("SERVER:", classRoomId);
-
   return (
     <div>
-      Class ID: {classRoomId}
-      <TeacherHomeComponent classRoomId={classRoomId} />
+      {/* Class ID: {classRoomId} */}
+      <ClassRoomView classRoomId={classRoomId} />
     </div>
   );
 }

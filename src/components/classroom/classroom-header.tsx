@@ -1,29 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Menu,
-  Settings,
-  Users,
-  Calendar,
-  Bell,
-  GraduationCap,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { USER_ROLE } from "@/constants/role";
+import { Menu, GraduationCap } from "lucide-react";
 
-export function ClassroomHeader({
-  userRole = "student",
-}: {
-  userRole?: keyof typeof USER_ROLE;
-}) {
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { useAppSelector } from "@/redux/hooks";
+
+export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
+  const { data: UserInfo } = useAppSelector((state) => state.userInfo);
+  const userRole = UserInfo?.role == "seller" ? "teacher" : UserInfo?.role;
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("activeTab") || "stream";
   const router = useRouter();
