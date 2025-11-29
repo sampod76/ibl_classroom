@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { LoadingSkeleton } from "@/components/ui/skeleton";
 import { BookOpen } from "lucide-react";
@@ -54,7 +55,7 @@ export default function StudentClassRoomList() {
           <>
             {classRoom.map((item) => {
               const room = item?.classRoomDetails[0];
-              return <ClassroomCard key={item._id} room={room} />;
+              return <ClassroomCard key={item._id} room={room as any} />;
             })}
           </>
         )}
