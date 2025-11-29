@@ -1,19 +1,5 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
-import { Menu, GraduationCap } from "lucide-react";
-
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-import { useAppSelector } from "@/redux/hooks";
-
-export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
-  const { data: UserInfo } = useAppSelector((state) => state.userInfo);
-  const userRole = UserInfo?.role == "seller" ? "teacher" : UserInfo?.role;
-  const searchParams = useSearchParams();
-  const activeTab = searchParams.get("activeTab") || "stream";
-  const router = useRouter();
-  const pathname = usePathname();
+/* 
   const handleMultipleQueryChange = (payload: Record<string, string>) => {
     const currentParams = new URLSearchParams(searchParams.toString());
 
@@ -23,12 +9,43 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
 
     router.replace(`${pathname}?${currentParams.toString()}`);
   };
+*/
+import { Button } from "@/components/ui/button";
+import { Menu, GraduationCap } from "lucide-react";
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { useAppSelector } from "@/redux/hooks";
+import { useGetSingleClassRoomQuery } from "@/redux/api/common/classroomApi";
+import { SkeletonCard } from "../ui/skeleton";
+import { useEffect } from "react";
+
+export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
+  const subjectId = useSearchParams().get("subjectId");
+  const { data: UserInfo } = useAppSelector((state) => state.userInfo);
+  const userRole = UserInfo?.role == "seller" ? "teacher" : UserInfo?.role;
+
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get("activeTab");
+  const router = useRouter();
+  const pathname = usePathname();
+  const { data, isLoading } = useGetSingleClassRoomQuery(classRoomId, {
+    skip: !Boolean(classRoomId),
+  });
   const handleQueryChange = (key: string, value: string) => {
     const currentParams = new URLSearchParams(searchParams.toString());
     currentParams.set(key, value);
-
     router.replace(`${pathname}?${currentParams.toString()}`);
   };
+  useEffect(() => {
+    if (!activeTab) {
+      handleQueryChange("activeTab", "classwork");
+    }
+  }, []);
+
+  if (isLoading) {
+    return <SkeletonCard />;
+  }
 
   return (
     <header className="border-b border-border bg-card sticky top-0 z-50">
@@ -42,7 +59,7 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-semibold text-foreground">
-                  Advanced Mathematics
+                  {data?.name}
                 </h1>
                 {userRole === "teacher" && (
                   <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
@@ -52,14 +69,14 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
                 )}
               </div>
               <p className="text-xs text-muted-foreground">
-                Spring 2024 • Section A
+                Class Code: {data?.classCode}
               </p>
             </div>
           </div>
         </div>
 
         <nav className="flex gap-6 border-t border-border">
-          <button
+          {/* <button
             onClick={() => handleQueryChange("activeTab", "stream")}
             className={`border-b-2 py-3 text-sm font-medium ${
               activeTab === "stream"
@@ -68,7 +85,7 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
             }`}
           >
             Stream
-          </button>
+          </button> */}
           <button
             onClick={() => handleQueryChange("activeTab", "classwork")}
             className={`border-b-2 py-3 text-sm font-medium ${

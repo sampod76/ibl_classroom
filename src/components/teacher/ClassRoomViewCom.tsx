@@ -19,6 +19,7 @@ export default function ClassRoomViewCom({
 }: {
   classRoomId: string;
 }) {
+  const subjectId = useSearchParams().get("subjectId");
   const dispatch = useAppDispatch();
   const { data: UserData, isLoading: UserLoading } = useAppSelector(
     (state) => state.userInfo
@@ -42,9 +43,9 @@ export default function ClassRoomViewCom({
       <ClassroomHeader classRoomId={classRoomId} />
       <div className="container mx-auto px-4 py-6">
         {activeTab === "stream" && (
-          <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+          <div className="">
             <ClassroomStream classRoomId={classRoomId} />
-            <ClassroomSidebar classRoomId={classRoomId} />
+            {/* <ClassroomSidebar classRoomId={classRoomId} /> */}
           </div>
         )}
         {activeTab === "classwork" && (

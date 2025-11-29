@@ -174,9 +174,7 @@ export default function TopicsCom({ classRoomId }: { classRoomId: string }) {
         {/* ✅ LEFT FORM */}
         <Col md={24} xl={8}>
           <ShadowCard>
-            <h2>
-              {editId ? "Edit Classroom Category" : "Add Classroom Category"}
-            </h2>
+            <h2>{editId ? "Edit Unit" : "Add Unit"}</h2>
 
             <Form layout="vertical" form={form} onFinish={onFinish}>
               <Form.Item
@@ -195,7 +193,7 @@ export default function TopicsCom({ classRoomId }: { classRoomId: string }) {
               </Form.Item>
 
               <Button type="primary" htmlType="submit" block>
-                {editId ? "Update Category" : "Save Category"}
+                {editId ? "Update Unit" : "Save Unit"}
               </Button>
 
               {/* ✅ Cancel Edit Button */}

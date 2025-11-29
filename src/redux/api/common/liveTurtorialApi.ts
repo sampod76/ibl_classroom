@@ -23,7 +23,7 @@ export const LiveTutorialApi = baseApi.injectEndpoints({
           meta: response.meta as IMeta,
         };
       },
-      providesTags: [tagTypes.LiveTutorial],
+      providesTags: [tagTypes.LiveTutorial, tagTypes.Topics],
     }),
     // get single academic department
     getSingleLiveTutorial: build.query({
@@ -34,7 +34,7 @@ export const LiveTutorialApi = baseApi.injectEndpoints({
         };
       },
       transformResponse: (response: any) => response.data as ILiveTutorial,
-      providesTags: [tagTypes.LiveTutorial],
+      providesTags: [tagTypes.LiveTutorial, tagTypes.Topics],
     }),
 
     // create a new academic department
@@ -43,10 +43,10 @@ export const LiveTutorialApi = baseApi.injectEndpoints({
         return {
           url: URL,
           method: "POST",
-          data,
+          body: data,
         };
       },
-      invalidatesTags: [tagTypes.LiveTutorial],
+      invalidatesTags: [tagTypes.LiveTutorial, tagTypes.Topics],
     }),
     // update ac department
     updateLiveTutorial: build.mutation({
@@ -54,10 +54,10 @@ export const LiveTutorialApi = baseApi.injectEndpoints({
         return {
           url: `${URL}/${id}`,
           method: "PATCH",
-          data: data,
+          body: data,
         };
       },
-      invalidatesTags: [tagTypes.LiveTutorial],
+      invalidatesTags: [tagTypes.LiveTutorial, tagTypes.Topics],
     }),
 
     // delete ac department
@@ -66,7 +66,7 @@ export const LiveTutorialApi = baseApi.injectEndpoints({
         url: `${URL}/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [tagTypes.LiveTutorial],
+      invalidatesTags: [tagTypes.LiveTutorial, tagTypes.Topics],
     }),
   }),
   overrideExisting: true,
