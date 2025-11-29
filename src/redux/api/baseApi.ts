@@ -40,7 +40,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 
   if (result?.error?.status !== 401) {
     //@ts-ignore
-    toast.error(result?.error?.data?.message as string);
+    // toast.error(result?.error?.data?.message as string);
   }
   // if (result?.error?.status === 403) {
   //   toast.error(result?.error?.data.message);

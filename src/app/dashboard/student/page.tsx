@@ -1,6 +1,9 @@
-import TeacherHomeComponent from "@/components/teacher/TeacherHomeComponent";
-import React from "react";
+import StudentHomeDashboard from "@/components/student/dashboard/StudentHomeDashboard";
 
-export default function TeacherHomePage() {
-  return <div>TeacherHomePage</div>;
+export default function StudentHomePage() {
+  return (
+    <div>
+      <StudentHomeDashboard />
+    </div>
+  );
 }

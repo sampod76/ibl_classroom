@@ -21,12 +21,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { USER_ROLE } from "@/constants/role";
+import { useAppSelector } from "@/redux/hooks";
 
-export function ClassroomStream({
-  userRole = "student",
-}: {
-  userRole?: keyof typeof USER_ROLE;
-}) {
+export function ClassroomStream({ classRoomId }: { classRoomId: string }) {
+  const { data: UserData, isLoading: UserLoading } = useAppSelector(
+    (state) => state.userInfo
+  );
+
+  const userRole = UserData?.role == "seller" ? "teacher" : UserData?.role;
   return (
     <main className="space-y-4">
       {/* Announcement Card */}

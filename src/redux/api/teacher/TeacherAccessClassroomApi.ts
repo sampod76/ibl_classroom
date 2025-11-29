@@ -16,6 +16,8 @@ export const TeacherAccessClassroomApi = baseApi.injectEndpoints({
           params: arg,
         };
       },
+      /*************  ✨ Windsurf Command ⭐  *************/
+      /*******  5117fb5c-efb4-47d1-aa45-f4296f6fb1bd  *******/
       transformResponse: (response: any) => {
         return {
           data: response.data as IClassroomData[],
@@ -38,22 +40,22 @@ export const TeacherAccessClassroomApi = baseApi.injectEndpoints({
 
     // create a new academic department
     addTeacherAccessClassroom: build.mutation({
-      query: (data) => {
+      query: (data: Record<string, any>) => {
         return {
           url: URL,
           method: "POST",
-          data,
+          body: data,
         };
       },
       invalidatesTags: [tagTypes.TeacherAccessClassroom],
     }),
     // update ac department
     updateTeacherAccessClassroom: build.mutation({
-      query: ({ data, id }) => {
+      query: ({ data, id }: { data: Record<string, any>; id: string }) => {
         return {
           url: `${URL}/${id}`,
           method: "PATCH",
-          data: data,
+          body: data,
         };
       },
       invalidatesTags: [tagTypes.TeacherAccessClassroom],
@@ -61,7 +63,7 @@ export const TeacherAccessClassroomApi = baseApi.injectEndpoints({
 
     // delete ac department
     deleteTeacherAccessClassroom: build.mutation({
-      query: (id) => ({
+      query: (id: string) => ({
         url: `${URL}/${id}`,
         method: "DELETE",
       }),

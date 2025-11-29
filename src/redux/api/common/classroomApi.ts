@@ -2,14 +2,13 @@
 import { tagTypes } from "@/redux/tag-types";
 import { IMeta } from "@/types";
 import { baseApi } from "../baseApi";
-import { IFileAfterUpload } from "@/types/globalType";
 
-const URL = "/cr-lecture-note";
+const URL = "/classroom";
 
-export const LectureNoteApi = baseApi.injectEndpoints({
+export const ClassRoomApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // get all academic departments
-    getAllLectureNote: build.query({
+    getAllClassRoom: build.query({
       query: (arg: Record<string, any>) => {
         return {
           url: URL,
@@ -19,77 +18,74 @@ export const LectureNoteApi = baseApi.injectEndpoints({
       },
       transformResponse: (response: any) => {
         return {
-          data: response.data as ILectureNote[],
+          data: response.data as IClassroom[],
           meta: response.meta as IMeta,
         };
       },
-      providesTags: [tagTypes.LectureNote, tagTypes.Topics],
+      providesTags: [tagTypes.assignment],
     }),
     // get single academic department
-    getSingleLectureNote: build.query({
+    getSingleClassRoom: build.query({
       query: (id: string | string[] | undefined) => {
         return {
           url: `${URL}/${id}`,
           method: "GET",
         };
       },
-      transformResponse: (response: any) => response.data as ILectureNote,
-      providesTags: [tagTypes.LectureNote, tagTypes.Topics],
+      transformResponse: (response: any) => response.data as IClassroom,
+      providesTags: [tagTypes.assignment],
     }),
 
     // create a new academic department
-    addLectureNote: build.mutation({
+    addClassRoom: build.mutation({
       query: (data) => {
         return {
           url: URL,
           method: "POST",
-          body: data,
+          data,
         };
       },
-      invalidatesTags: [tagTypes.LectureNote, tagTypes.Topics],
+      invalidatesTags: [tagTypes.assignment],
     }),
     // update ac department
-    updateLectureNote: build.mutation({
+    updateClassRoom: build.mutation({
       query: ({ data, id }) => {
         return {
           url: `${URL}/${id}`,
           method: "PATCH",
-          body: data,
+          data: data,
         };
       },
-      invalidatesTags: [tagTypes.LectureNote, tagTypes.Topics],
+      invalidatesTags: [tagTypes.assignment],
     }),
 
     // delete ac department
-    deleteLectureNote: build.mutation({
+    deleteClassRoom: build.mutation({
       query: (id) => ({
         url: `${URL}/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [tagTypes.LectureNote, tagTypes.Topics],
+      invalidatesTags: [tagTypes.assignment],
     }),
   }),
   overrideExisting: true,
 });
 
 export const {
-  useAddLectureNoteMutation,
-  useDeleteLectureNoteMutation,
-  useGetAllLectureNoteQuery,
-  useGetSingleLectureNoteQuery,
-  useUpdateLectureNoteMutation,
-} = LectureNoteApi;
+  useAddClassRoomMutation,
+  useDeleteClassRoomMutation,
+  useGetAllClassRoomQuery,
+  useGetSingleClassRoomQuery,
+  useUpdateClassRoomMutation,
+} = ClassRoomApi;
 
-interface ILectureNote {
+export interface IClassroom {
   _id: string;
-  title: string;
-  description: string;
-  classRoomId: string;
-  crTopicId: string;
+  name: string;
   authorId: string;
-  files: IFileAfterUpload[];
   serial_number: number;
   status: string;
+  classCode: string;
   isDelete: string;
   createdAt: string;
   updatedAt: string;
