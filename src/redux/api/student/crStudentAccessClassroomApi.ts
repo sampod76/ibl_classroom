@@ -42,7 +42,7 @@ export const StudentAccessClassroomApi = baseApi.injectEndpoints({
         return {
           url: URL,
           method: "POST",
-          data,
+          body: data,
         };
       },
       invalidatesTags: [tagTypes.StudentAccessClassroom],
@@ -53,7 +53,7 @@ export const StudentAccessClassroomApi = baseApi.injectEndpoints({
         return {
           url: `${URL}/${id}`,
           method: "PATCH",
-          data: data,
+          body: data,
         };
       },
       invalidatesTags: [tagTypes.StudentAccessClassroom],

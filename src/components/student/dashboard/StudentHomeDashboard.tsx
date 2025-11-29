@@ -3,7 +3,10 @@
 
 import React from "react";
 import { Form, Input, Button, message, Card } from "antd";
-
+import {
+  useAddTeacherAccessClassroomMutation,
+  useGetAllTeacherAccessClassroomQuery,
+} from "@/redux/api/teacher/TeacherAccessClassroomApi";
 import { LoadingSkeleton } from "@/components/ui/skeleton";
 import { BookOpen } from "lucide-react";
 import ClassroomCard from "@/components/classroom/classroom-card";
@@ -12,16 +15,20 @@ import {
   useAddStudentAccessClassroomMutation,
   useGetAllStudentAccessClassroomQuery,
 } from "@/redux/api/student/crStudentAccessClassroomApi";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/redux/hooks";
 
 interface JoinClassroomFormValues {
   classRoomCode: string;
 }
 
 export default function StudentHomeDashboard() {
+  const { data: UserInfo } = useAppSelector((state) => state.userInfo);
+  const router = useRouter();
   const [sendJoinClassRoom, { isLoading }] =
     useAddStudentAccessClassroomMutation();
   const { data, isLoading: classroomLoading } =
-    useGetAllStudentAccessClassroomQuery({ limit: 900 });
+    useGetAllStudentAccessClassroomQuery({ status: "pending", limit: 900 });
 
   const [form] = Form.useForm<JoinClassroomFormValues>();
 
@@ -34,6 +41,7 @@ export default function StudentHomeDashboard() {
       Success_model(
         "Classroom join request sent successfully! Please go to your classroom and wait for approval."
       );
+      router.push(`/dashboard/${UserInfo?.role}/classroom`);
       form.resetFields();
     } catch (error: any) {
       console.log("🚀 ~ onFinish ~ error:", error);

@@ -1,8 +1,5 @@
-import AddSubjectInTeacher from "@/components/classroom/subjects/addSubject";
-import SubjectList from "@/components/classroom/subjects/subjectList";
-import ModalComponent from "@/components/modal/ModalComponents";
+import StudentSubjectList from "@/components/classroom/subjects/studentSubjectList";
 import ClassRoomView from "@/components/teacher/ClassRoomViewCom";
-import { useGetAllAccessSubjectByTeacherQuery } from "@/redux/api/common/subjectApi";
 
 export default async function ClassRoomIdPage({
   params,
@@ -24,7 +21,7 @@ export default async function ClassRoomIdPage({
       {/* ===========================
           LEFT SIDEBAR (TOP ON MOBILE)
       ============================ */}
-      <SubjectList classRoomId={classRoomId} />
+      <StudentSubjectList classRoomId={classRoomId} />
 
       {/* ===========================
           MAIN CONTENT (BOTTOM ON MOBILE)

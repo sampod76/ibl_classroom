@@ -61,10 +61,10 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
                 <h1 className="text-lg font-semibold text-foreground">
                   {data?.name}
                 </h1>
-                {userRole === "teacher" && (
+                {userRole && (
                   <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                     <GraduationCap className="h-3 w-3" />
-                    Teacher
+                    {userRole == "teacher" ? "Teacher" : "Student"}
                   </span>
                 )}
               </div>

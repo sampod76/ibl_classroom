@@ -2,12 +2,20 @@
 import ModalComponent from "@/components/modal/ModalComponents";
 import React, { useEffect } from "react";
 import AddSubjectInTeacher from "./addSubject";
-import { useGetAllAccessSubjectByTeacherQuery } from "@/redux/api/common/subjectApi";
+import {
+  useGetAllAccessSubjectByTeacherQuery,
+  useGetAllSubjectQuery,
+} from "@/redux/api/common/subjectApi";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn";
 
-export default function SubjectList({ classRoomId }: { classRoomId: string }) {
+export default function StudentSubjectList({
+  classRoomId,
+}: {
+  classRoomId: string;
+}) {
+  console.log("🚀 ~ StudentSubjectList ~ classRoomId:", classRoomId);
   const subjectId = useSearchParams().get("subjectId");
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -18,7 +26,7 @@ export default function SubjectList({ classRoomId }: { classRoomId: string }) {
 
     router.replace(`${pathname}?${currentParams.toString()}`);
   };
-  const { data, isLoading } = useGetAllAccessSubjectByTeacherQuery(
+  const { data, isLoading } = useGetAllSubjectQuery(
     {
       classRoomId,
       limit: 100,
@@ -27,14 +35,15 @@ export default function SubjectList({ classRoomId }: { classRoomId: string }) {
       skip: !Boolean(classRoomId),
     }
   );
+  console.log("🚀 ~ StudentSubjectList ~ data:", data);
 
   useEffect(() => {
-    const firstSubjectId = data?.data[0]?.subjectDetails[0]?._id;
+    const firstSubjectId = data?.data[0]?._id;
 
     if (firstSubjectId) {
       handleQueryChange("subjectId", firstSubjectId);
     }
-  }, [data?.data[0]?.subjectDetails[0]?._id, isLoading]);
+  }, [data?.data[0]?._id, isLoading]);
 
   if (isLoading) {
     return (
@@ -58,7 +67,7 @@ export default function SubjectList({ classRoomId }: { classRoomId: string }) {
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold mb-3">📚 Subjects </h3>
 
-          <ModalComponent
+          {/* <ModalComponent
             button={
               <p className="text-sm bg-violet-600 ring-1 ring-violet-400 animate-pulse text-white border rounded-md p-1 font-semibold mb-3 cursor-pointer">
                 ➕ Add Subject{" "}
@@ -67,7 +76,7 @@ export default function SubjectList({ classRoomId }: { classRoomId: string }) {
             width={650}
           >
             <AddSubjectInTeacher />
-          </ModalComponent>
+          </ModalComponent> */}
         </div>
 
         <ul className="space-y-2">
@@ -76,14 +85,12 @@ export default function SubjectList({ classRoomId }: { classRoomId: string }) {
               key={i}
               className={cn(
                 "p-2 rounded-md cursor-pointer hover:bg-primary/10 hover:text-primary transition text-sm md:text-base border-b-2",
-                subject?.subjectDetails[0]?._id === subjectId &&
+                subject?._id === subjectId &&
                   "bg-blue-500 text-white  hover:bg-blue-500 hover:text-white"
               )}
-              onClick={() =>
-                handleQueryChange("subjectId", subject?.subjectDetails[0]?._id)
-              }
+              onClick={() => handleQueryChange("subjectId", subject?._id)}
             >
-              {subject?.subjectDetails[0]?.title}
+              {subject?.title}
             </li>
           ))}
         </ul>

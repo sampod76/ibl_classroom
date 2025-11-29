@@ -33,17 +33,19 @@ export function ClassworkPage({ classRoomId }: { classRoomId: string }) {
               : "View all assignments, materials, and topics"}
           </p>
         </div>
-        <ModalComponent
-          button={
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create Unit
-            </Button>
-          }
-          modalId={subjectId}
-        >
-          <CreateTopicsCom subjectId={subjectId} />
-        </ModalComponent>
+        {role === "teacher" && (
+          <ModalComponent
+            button={
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create Unit
+              </Button>
+            }
+            modalId={subjectId}
+          >
+            <CreateTopicsCom subjectId={subjectId} />
+          </ModalComponent>
+        )}
       </div>
 
       {/* ✅ New Dialog Components */}
