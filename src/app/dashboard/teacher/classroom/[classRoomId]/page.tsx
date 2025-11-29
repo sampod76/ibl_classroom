@@ -1,4 +1,5 @@
 import StudentSubjectList from "@/components/classroom/subjects/studentSubjectList";
+import TeacherSubjectList from "@/components/classroom/subjects/teacherSubjectList";
 import ClassRoomView from "@/components/teacher/ClassRoomViewCom";
 
 export default async function ClassRoomIdPage({
@@ -21,7 +22,7 @@ export default async function ClassRoomIdPage({
       {/* ===========================
           LEFT SIDEBAR (TOP ON MOBILE)
       ============================ */}
-      <StudentSubjectList classRoomId={classRoomId} />
+      <TeacherSubjectList classRoomId={classRoomId} />
 
       {/* ===========================
           MAIN CONTENT (BOTTOM ON MOBILE)
