@@ -20,6 +20,7 @@ interface JoinClassroomFormValues {
 
 export default function TeacherHomeDashboard() {
   const { data: UserInfo } = useAppSelector((state) => state.userInfo);
+  const userRole = UserInfo?.role == "seller" ? "teacher" : UserInfo?.role;
   const router = useRouter();
   const [sendJoinClassRoom, { isLoading }] =
     useAddTeacherAccessClassroomMutation();
@@ -36,7 +37,7 @@ export default function TeacherHomeDashboard() {
       Success_model(
         "Classroom join request sent successfully! Please go to your classroom and wait for approval."
       );
-      router.push(`/dashboard/${UserInfo?.role}/classroom`);
+      router.push(`/dashboard/${userRole}/classroom`);
       form.resetFields();
     } catch (error: any) {
       console.log("🚀 ~ onFinish ~ error:", error);
