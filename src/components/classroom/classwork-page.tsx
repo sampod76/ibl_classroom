@@ -9,8 +9,9 @@ import TopicList from "./classwork/TopicList";
 import { useAppSelector } from "@/redux/hooks";
 import { Button } from "../ui/button";
 import ModalComponent from "../modal/ModalComponents";
-import CreateTopicsCom from "./topics/createTopicsCom";
+
 import { useSearchParams } from "next/navigation";
+import CreateUpdateTopicsCom from "./topics/createUpdateTopicsCom";
 
 // ✅ New Components
 
@@ -43,7 +44,7 @@ export function ClassworkPage({ classRoomId }: { classRoomId: string }) {
             }
             modalId={subjectId}
           >
-            <CreateTopicsCom subjectId={subjectId} />
+            <CreateUpdateTopicsCom subjectId={subjectId} />
           </ModalComponent>
         )}
       </div>

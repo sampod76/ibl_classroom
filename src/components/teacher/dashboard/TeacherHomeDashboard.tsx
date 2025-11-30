@@ -11,12 +11,16 @@ import { LoadingSkeleton } from "@/components/ui/skeleton";
 import { BookOpen } from "lucide-react";
 import ClassroomCard from "@/components/classroom/classroom-card";
 import { Success_model } from "@/utils/modalHook";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/redux/hooks";
 
 interface JoinClassroomFormValues {
   classRoomCode: string;
 }
 
 export default function TeacherHomeDashboard() {
+  const { data: UserInfo } = useAppSelector((state) => state.userInfo);
+  const router = useRouter();
   const [sendJoinClassRoom, { isLoading }] =
     useAddTeacherAccessClassroomMutation();
   const { data, isLoading: classroomLoading } =
@@ -25,7 +29,6 @@ export default function TeacherHomeDashboard() {
   const [form] = Form.useForm<JoinClassroomFormValues>();
 
   const onFinish = async (values: JoinClassroomFormValues) => {
-    console.log("🚀 ~ onFinish ~ values:", values);
     try {
       const res = await sendJoinClassRoom(values).unwrap();
 
@@ -33,6 +36,7 @@ export default function TeacherHomeDashboard() {
       Success_model(
         "Classroom join request sent successfully! Please go to your classroom and wait for approval."
       );
+      router.push(`/dashboard/${UserInfo?.role}/classroom`);
       form.resetFields();
     } catch (error: any) {
       console.log("🚀 ~ onFinish ~ error:", error);
