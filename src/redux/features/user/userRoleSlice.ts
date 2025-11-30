@@ -13,7 +13,7 @@ export interface UserState {
   exp: number;
   iat: number;
   accessToken?: string;
-  modifyRole: keyof typeof USER_ROLE;
+  modifyRole?: keyof typeof USER_ROLE;
 }
 export interface TokenUserRole {
   data?: UserState;
