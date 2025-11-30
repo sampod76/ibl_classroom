@@ -53,208 +53,30 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
     (state) => state.userInfo
   );
   const subjectId = useSearchParams().get("subjectId");
-  const query = {
-    subjectId,
-    limit: limit,
-    page: page,
-  };
+  const query = React.useMemo(() => {
+    return {
+      subjectId,
+      limit,
+      page,
+    };
+  }, [subjectId, limit, page]);
+
   const role = UserData?.role == "seller" ? "teacher" : UserData?.role;
-  const { data, isLoading } = useGetAllTopicsQuery(query, {
+  const { data, isLoading, isFetching } = useGetAllTopicsQuery(query, {
     skip: !Boolean(subjectId),
   });
 
-  // ✅ Dialog States
-  const [openAssignment, setOpenAssignment] = useState(false);
-  const [openLectureNotes, setOpenLectureNotes] = useState(false);
-  const [openTutorial, setOpenTutorial] = useState(false);
-
-  // ==================================
-  // 🔵 Modal state for Objectives
-  // ==================================
   const [openModal, setOpenModal] = useState(false);
   const [modalObjectives, setModalObjectives] = useState<{ title: string }[]>(
     []
   );
 
   // ==================================
-  // 📌 Dynamic Topics Data
-  // ==================================
-  const topicsData = [
-    {
-      week: "Week 8: Integration Techniques",
-      isCurrent: true,
-      items: [
-        // Objective item (no type)
-        {
-          objective: [
-            { title: "Learn limit definition" },
-            { title: "Learn limit notation" },
-            { title: "Learn limit notation" },
-            { title: "Learn limit notation" },
-          ],
-        },
-
-        // Assignment block
-        {
-          type: "assignment",
-          icon: ClipboardList,
-          iconColor: "bg-destructive/10",
-          textColor: "text-destructive",
-          title: "Integration by Parts Assignment",
-          desc: "Complete problems 1-20 from Chapter 8. Show all work and explanations.",
-          badge: "Due Soon",
-          points: "100 points",
-          date: "Due: Mar 25, 11:59 PM",
-          submitCount: "3/32",
-          roleActions: {
-            student: [
-              { label: "View Details", variant: "outline" },
-              { label: "Submit Work", variant: "default" },
-            ],
-            teacher: [
-              { label: "View Submissions (3)", icon: BarChart3 },
-              { label: "Edit", variant: "outline", icon: Edit },
-            ],
-          },
-        },
-
-        // Notes block
-        {
-          type: "notes",
-          icon: FileText,
-          iconColor: "bg-primary/10",
-          textColor: "text-primary",
-          title: "Integration Lecture Notes",
-          desc: "Comprehensive notes covering integration by parts, u-substitution, and trigonometric substitution.",
-          date: "Posted: Mar 18",
-          fileInfo: "PDF • 2.4 MB",
-          roleActions: {
-            student: [
-              { label: "Download", variant: "outline" },
-              { label: "View", variant: "ghost" },
-            ],
-            teacher: [
-              { label: "Download", variant: "outline" },
-              { label: "View", variant: "ghost" },
-            ],
-          },
-        },
-
-        // Tutorial block
-        {
-          type: "tutorial",
-          icon: Video,
-          iconColor: "bg-accent/10",
-          textColor: "text-accent",
-          title: "Live Tutorial Session",
-          desc: "Join us for a live problem-solving session on integration techniques.",
-          date: "Mar 23, 2:00 PM",
-          duration: "60 minutes",
-          roleActions: {
-            student: [
-              { label: "Join Google Meet" },
-              { label: "Add to Calendar", variant: "outline" },
-            ],
-            teacher: [
-              { label: "Join Google Meet" },
-              { label: "Add to Calendar", variant: "outline" },
-            ],
-          },
-        },
-      ],
-    },
-
-    // SECOND WEEK
-    {
-      week: "Week 7: Integration Techniques part one",
-      isCurrent: true,
-      items: [
-        {
-          objective: [
-            { title: "Learn limit definition" },
-            { title: "Learn limit notation" },
-            { title: "Learn limit notation" },
-            { title: "Learn limit notation" },
-          ],
-        },
-
-        // Assignment block
-        {
-          type: "assignment",
-          icon: ClipboardList,
-          iconColor: "bg-destructive/10",
-          textColor: "text-destructive",
-          title: "Integration by Parts Assignment",
-          desc: "Complete problems 1-20 from Chapter 8. Show all work and explanations.",
-          badge: "Due Soon",
-          points: "100 points",
-          date: "Due: Mar 25, 11:59 PM",
-          submitCount: "3/32",
-          roleActions: {
-            student: [
-              { label: "View Details", variant: "outline" },
-              { label: "Submit Work", variant: "default" },
-            ],
-            teacher: [
-              { label: "View Submissions (3)", icon: BarChart3 },
-              { label: "Edit", variant: "outline", icon: Edit },
-            ],
-          },
-        },
-
-        // Notes block
-        {
-          type: "notes",
-          icon: FileText,
-          iconColor: "bg-primary/10",
-          textColor: "text-primary",
-          title: "Integration Lecture Notes",
-          desc: "Comprehensive notes covering integration by parts, u-substitution, and trigonometric substitution.",
-          date: "Posted: Mar 18",
-          fileInfo: "PDF • 2.4 MB",
-          roleActions: {
-            student: [
-              { label: "Download", variant: "outline" },
-              { label: "View", variant: "ghost" },
-            ],
-            teacher: [
-              { label: "Download", variant: "outline" },
-              { label: "View", variant: "ghost" },
-            ],
-          },
-        },
-
-        // Tutorial block
-        {
-          type: "tutorial",
-          icon: Video,
-          iconColor: "bg-accent/10",
-          textColor: "text-accent",
-          title: "Pre Recorded Tutorial Session",
-          desc: "Join us for a live problem-solving session on integration techniques.",
-          date: "Mar 23, 2:00 PM",
-          duration: "60 minutes",
-          roleActions: {
-            student: [
-              { label: "See Record video" },
-              { label: "Add to Calendar", variant: "outline" },
-            ],
-            teacher: [
-              { label: "See Record video" },
-              { label: "Add to Calendar", variant: "outline" },
-            ],
-          },
-        },
-      ],
-    },
-  ];
-
-  // ==================================
   // 🔵 UI RENDER
   // ==================================
-  if (isLoading) return <LoadingSkeleton />;
+  if (isLoading || isFetching) return <LoadingSkeleton />;
   const topicData = data?.data || [];
-  console.log("🚀 ~ TopicList ~ topicData:", topicData);
+
   const downloadAllFiles = async (files: any[]) => {
     for (const file of files) {
       const fileUrl = file?.cdn ? `${file.cdn}/${file.path}` : file.url;

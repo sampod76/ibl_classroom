@@ -34,11 +34,12 @@ export default function TeacherSubjectList({
 
   useEffect(() => {
     const firstSubjectId = data?.data[0]?.subjectDetails[0]?._id;
-
-    if (firstSubjectId) {
+    if (subjectId) {
+      handleQueryChange("subjectId", subjectId);
+    } else if (!subjectId && firstSubjectId) {
       handleQueryChange("subjectId", firstSubjectId);
     }
-  }, [data?.data[0]?.subjectDetails[0]?._id, isLoading]);
+  }, [data?.data[0]?.subjectDetails[0]?._id, subjectId]);
 
   if (isLoading) {
     return (
