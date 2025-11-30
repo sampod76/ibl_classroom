@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ShadowCard from "@/components/ui/ShadowCard";
 import {
+  ITopis,
   useAddTopicsMutation,
   useUpdateTopicsMutation,
 } from "@/redux/api/teacher/topicsApi";
@@ -10,26 +11,45 @@ import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/redux/hooks";
 
-export default function CreateTopicsCom({ subjectId }: { subjectId: string }) {
+export default function CreateUpdateTopicsCom({
+  subjectId,
+  defaultValue,
+}: {
+  subjectId: string;
+  defaultValue?: ITopis;
+}) {
   const { userInfo, modal } = useAppSelector((state) => state);
-
   const [form] = Form.useForm();
-  const [editId, setEditId] = useState<string | null>(null);
+
   const [addTopics, { isLoading: cLoading }] = useAddTopicsMutation();
   const [updateTopics, { isLoading: uLoading }] = useUpdateTopicsMutation();
 
+  // =========================
+  //  ✔ Load Default Value (Edit Mode)
+  // =========================
+  useEffect(() => {
+    if (defaultValue && defaultValue?._id) {
+      form.setFieldsValue({
+        title: defaultValue.title,
+        status: defaultValue.status,
+        objective:
+          defaultValue.objective?.map((obj) => ({
+            title: obj.title || "",
+          })) || [],
+      });
+    }
+  }, [defaultValue?._id]);
+
   const onFinish = async (values: any) => {
     try {
-      if (editId) {
-        // UPDATE MODE
+      if (defaultValue?._id) {
         await updateTopics({
-          id: editId,
+          id: defaultValue?._id,
           data: values,
         }).unwrap();
+
         Success_model("Successfully Updated");
-        setEditId(null);
       } else {
-        // CREATE MODE
         await addTopics({ ...values, subjectId }).unwrap();
         Success_model("Successfully Created");
       }
@@ -40,17 +60,11 @@ export default function CreateTopicsCom({ subjectId }: { subjectId: string }) {
     }
   };
 
-  //   useEffect(() => {
-  //     if (modal[subjectId]) {
-  //       form.resetFields();
-  //     }
-  //   }, [modal]);
-
   return (
     <div>
       <Col md={24}>
         <div>
-          <h2>{editId ? "Edit Unit" : "Add Unit"}</h2>
+          <h2>{defaultValue?._id ? "Edit Unit" : "Add Unit"}</h2>
 
           <Form layout="vertical" form={form} onFinish={onFinish}>
             {/* Title */}
@@ -62,9 +76,7 @@ export default function CreateTopicsCom({ subjectId }: { subjectId: string }) {
               <Input placeholder="Enter title " />
             </Form.Item>
 
-            {/* ===========================
-                OBJECTIVE LIST + CONFIRM
-            ============================ */}
+            {/* OBJECTIVE LIST */}
             <Form.List name="objective">
               {(fields, { add, remove }) => (
                 <div className="space-y-3">
@@ -86,7 +98,6 @@ export default function CreateTopicsCom({ subjectId }: { subjectId: string }) {
                         <Input placeholder="Objective title" />
                       </Form.Item>
 
-                      {/* ❌ Remove Button with Confirmation */}
                       <Button
                         danger
                         icon={<MinusCircleOutlined />}
@@ -99,7 +110,7 @@ export default function CreateTopicsCom({ subjectId }: { subjectId: string }) {
                             okType: "danger",
                             cancelText: "Cancel",
                             onOk() {
-                              remove(name); // Final delete
+                              remove(name);
                             },
                           });
                         }}
@@ -118,6 +129,7 @@ export default function CreateTopicsCom({ subjectId }: { subjectId: string }) {
                 </div>
               )}
             </Form.List>
+
             {/* Status */}
             <Form.Item label="Status" name="status" initialValue="active">
               <Select>
@@ -125,25 +137,25 @@ export default function CreateTopicsCom({ subjectId }: { subjectId: string }) {
                 <Select.Option value="inactive">Inactive</Select.Option>
               </Select>
             </Form.Item>
+
             <br />
+
+            {/* Submit / Reset */}
             <div className="grid grid-cols-2 gap-3 mt-4">
-              {/* Save / Update */}
               <Button
                 loading={cLoading || uLoading}
                 type="primary"
                 htmlType="submit"
                 block
               >
-                {editId ? "Update Unit" : "Save Unit"}
+                {defaultValue?._id ? "Update Unit" : "Save Unit"}
               </Button>
 
-              {/* Reset / Cancel */}
-              {editId ? (
+              {defaultValue?._id ? (
                 <Button
                   danger
                   block
                   onClick={() => {
-                    setEditId(null);
                     form.resetFields();
                   }}
                 >
@@ -155,8 +167,6 @@ export default function CreateTopicsCom({ subjectId }: { subjectId: string }) {
                 </Button>
               )}
             </div>
-
-            {/* Submit */}
           </Form>
         </div>
       </Col>

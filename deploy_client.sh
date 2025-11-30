@@ -65,3 +65,4 @@ fi
 log "✅ Deployment completed successfully!"
 
 # 
+# docker compose up -d --build --force-recreate

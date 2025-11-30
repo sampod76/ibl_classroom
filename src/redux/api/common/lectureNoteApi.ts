@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { tagTypes } from "@/redux/tag-types";
-import { IMeta } from "@/types";
+import { IMeta, IUserRef } from "@/types";
 import { baseApi } from "../baseApi";
 import { IFileAfterUpload } from "@/types/globalType";
 
@@ -50,7 +50,7 @@ export const LectureNoteApi = baseApi.injectEndpoints({
     }),
     // update ac department
     updateLectureNote: build.mutation({
-      query: ({ data, id }) => {
+      query: ({ data, id }: { data: any; id: string }) => {
         return {
           url: `${URL}/${id}`,
           method: "PATCH",
@@ -80,13 +80,13 @@ export const {
   useUpdateLectureNoteMutation,
 } = LectureNoteApi;
 
-interface ILectureNote {
+export interface ILectureNote {
   _id: string;
   title: string;
   description: string;
   classRoomId: string;
   crTopicId: string;
-  authorId: string;
+  author: IUserRef;
   files: IFileAfterUpload[];
   serial_number: number;
   status: string;

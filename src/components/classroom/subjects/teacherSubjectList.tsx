@@ -71,7 +71,7 @@ export default function TeacherSubjectList({
             }
             width={650}
           >
-            <AddSubjectInTeacher />
+            <AddSubjectInTeacher classRoomId={classRoomId} />
           </ModalComponent>
         </div>
 

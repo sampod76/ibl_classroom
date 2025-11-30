@@ -11,7 +11,7 @@ import { Form, Input, Button, message, Card } from "antd";
 export default function AddSubjectInTeacher({
   classRoomId,
 }: {
-  classRoomId?: string;
+  classRoomId: string;
 }) {
   const [addClassRoom, { isLoading }] = useAddAccessSubjectByTeacherMutation();
   const [form] = Form.useForm<JoinSubjectCodeFormValues>();
@@ -19,7 +19,7 @@ export default function AddSubjectInTeacher({
     console.log("🚀 ~ onFinish ~ values:", values);
 
     try {
-      const res = await addClassRoom(values).unwrap();
+      const res = await addClassRoom({ ...values, classRoomId }).unwrap();
 
       // message.success("Classroom join request sent successfully!");
       Success_model("Join request sent successfully! ");
