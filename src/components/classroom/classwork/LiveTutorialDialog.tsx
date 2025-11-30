@@ -57,7 +57,10 @@ export default function TutorialDialog({
     try {
       if (defaultValues?._id) {
         await updateLiveTutorial({
-          ...values,
+          id: defaultValues?._id,
+          data: {
+            ...values,
+          },
         }).unwrap();
       } else {
         await addLiveTutorial({ ...values, topicId }).unwrap();
@@ -75,7 +78,22 @@ export default function TutorialDialog({
   };
   useEffect(() => {
     if (defaultValues?._id) {
-      form.setFieldsValue(defaultValues);
+      form.setFieldsValue({
+        ...defaultValues,
+
+        // 🔥 Convert timestamp/string → Dayjs for AntD DatePicker
+        startDate: defaultValues.startDate
+          ? dayjs(defaultValues.startDate)
+          : null,
+
+        // Optional: ensure nested structure exists
+        meetingDetails: {
+          link: defaultValues.meetingDetails?.link || "",
+        },
+        recordingDetails: {
+          link: defaultValues.recordingDetails?.link || "",
+        },
+      });
     }
   }, [defaultValues?._id]);
 

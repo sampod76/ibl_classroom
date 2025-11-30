@@ -13,9 +13,10 @@ import {
   Edit2,
   Video,
   VideoIcon,
+  Book,
 } from "lucide-react";
 
-import { Collapse, Dropdown, Modal, Tooltip } from "antd";
+import { Collapse, Dropdown, Modal, Pagination, Tooltip } from "antd";
 import React, { useMemo, useState } from "react";
 import AssignmentDialog from "./AssignmentDialog";
 import LectureNotesDialog from "./LectureNotesDialog";
@@ -30,6 +31,7 @@ import Link from "next/link";
 import fileObjectToLink from "@/utils/fileObjectToLink";
 import ModalComponent from "@/components/modal/ModalComponents";
 import CreateUpdateTopicsCom from "../topics/createUpdateTopicsCom";
+import { ILectureNote } from "@/redux/api/common/lectureNoteApi";
 
 const shortenName = (name: string, max = 20) =>
   name.length <= max ? name : name.substring(0, max) + "...";
@@ -67,6 +69,7 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
   if (!subjectId) return <>Do not have SubjectId</>;
 
   const topicData = data?.data || [];
+  const meta = data?.meta;
 
   // 🔵 Download all files
   const downloadAllFiles = async (files: any[]) => {
@@ -92,12 +95,48 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
   const collapseItems = topicData.map((topic: any, index: number) => ({
     key: index,
     label: (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <h3 className="text-lg font-semibold">{topic.title}</h3>
+
+        {/* CURRENT TOPIC BADGE */}
         {topic?.liveTutorials?.[0]?.startDate &&
           new Date(topic.liveTutorials[0].startDate) > new Date() && (
             <Badge variant="secondary">Current Topic</Badge>
           )}
+
+        {/* DATE + RED ANIMATED DOT */}
+        {topic?.liveTutorials?.[0]?.startDate &&
+          new Date(topic.liveTutorials[0].startDate) > new Date() && (
+            <Tooltip
+              title={`Don't forget! Your live class starts on ${DateFormatterDayjsOop.formatDate(
+                topic.liveTutorials[0].startDate,
+                "MMM D, YYYY - hh:mm A"
+              )}.`}
+            >
+              <div className="flex items-center gap-1 ml-2">
+                {/* RED ANIMATED DOT */}
+                <span className="h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
+
+                {/* Normal filled dot so ping animation looks clean */}
+                <span className="h-2 w-2 rounded-full bg-red-500 relative -ml-2"></span>
+
+                {/* DATE TEXT */}
+                <span className="text-xs font-medium text-red-600">
+                  {DateFormatterDayjsOop.formatDate(
+                    topic.liveTutorials[0].startDate,
+                    "MMM D, YYYY - hh:mm A"
+                  )}
+                </span>
+              </div>
+            </Tooltip>
+          )}
+        <h4 className="font-semibold flex items-center gap-2">
+          {topic?.author?.userId === UserData?.userId && (
+            <span className="text-xs px-2 py-0.5 rounded-md bg-green-100 text-green-600 font-medium">
+              Your Content
+            </span>
+          )}
+        </h4>
       </div>
     ),
     children: (
@@ -215,22 +254,37 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
           {topic?.liveTutorials?.map((tutorial: any, idx: number) => (
             <Card key={idx} className="p-4 hover:shadow-md transition relative">
               {/* ✏️ Edit Button - TOP RIGHT CORNER */}
-              <button
-                // <-- তোমার এডিট ফাংশন
-                className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 transition shadow-sm bg-red-200"
+
+              <ModalComponent
+                button={
+                  <button
+                    // <-- তোমার এডিট ফাংশন
+                    className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 transition shadow-sm bg-red-200"
+                  >
+                    <Tooltip title="Edit Live Tutorial">
+                      <Edit2 className="h-4 w-4   text-gray-800 " />
+                    </Tooltip>
+                  </button>
+                }
               >
-                <Tooltip title="Edit Live Tutorial">
-                  <Edit2 className="h-4 w-4   text-gray-800 " />
-                </Tooltip>
-              </button>
+                <TutorialDialog topicId={topic._id} defaultValues={tutorial} />
+              </ModalComponent>
 
               <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+                <div className="flex flex-col h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
                   <Video className="h-5 w-5 text-destructive" />
                 </div>
 
                 <div className="flex-1">
-                  <h4 className="font-semibold">{tutorial.title}</h4>
+                  <h4 className="font-semibold flex items-center gap-2">
+                    {tutorial.title}
+
+                    {tutorial?.author?.userId === UserData?.userId && (
+                      <span className="text-xs px-2 py-0.5 rounded-md bg-green-100 text-green-600 font-medium">
+                        Your Content
+                      </span>
+                    )}
+                  </h4>
 
                   <Tooltip
                     title={tutorial.description}
@@ -289,15 +343,40 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
           ))}
 
           {/* Lecture Notes */}
-          {topic?.lectureNotes?.map((lecture: any, idx: number) => (
-            <Card key={idx} className="p-4 hover:shadow-md transition">
+          {topic?.lectureNotes?.map((lecture: ILectureNote, idx: number) => (
+            <Card key={idx} className="p-4 hover:shadow-md transition relative">
+              <ModalComponent
+                button={
+                  <button
+                    // <-- তোমার এডিট ফাংশন
+                    className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 transition shadow-sm bg-red-200"
+                  >
+                    <Tooltip title="Edit Live Tutorial">
+                      <Edit2 className="h-4 w-4   text-gray-800 " />
+                    </Tooltip>
+                  </button>
+                }
+              >
+                <LectureNotesDialog
+                  topicId={topic._id}
+                  defaultValues={lecture}
+                />
+              </ModalComponent>
               <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
-                  <Video className="h-5 w-5 text-destructive" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600/10">
+                  <Book className="h-5 w-5 text-black" />
                 </div>
 
                 <div className="flex-1">
-                  <h4 className="font-semibold">{lecture.title}</h4>
+                  <h4 className="font-semibold flex items-center gap-2">
+                    {lecture.title}
+
+                    {lecture.author.userId === UserData?.userId && (
+                      <span className="text-xs px-2 py-0.5 rounded-md bg-green-100 text-green-600 font-medium">
+                        Your Content
+                      </span>
+                    )}
+                  </h4>
 
                   <Tooltip title={lecture.description}>
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
@@ -341,7 +420,14 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
       </div>
     ),
   }));
+  const onChange = (newPage: number) => {
+    setPage(newPage);
+  };
 
+  const onShowSizeChange = (_: number, newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1); // Limit বদলালে প্রথম পেজে ফিরে যাবে
+  };
   // 🔵 MAIN RETURN
   return (
     <div className="space-y-6">
@@ -350,7 +436,17 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
         expandIconPlacement="end"
         items={collapseItems}
       />
-
+      <div className="flex justify-end mt-6">
+        <Pagination
+          showSizeChanger
+          current={page}
+          onChange={onChange}
+          onShowSizeChange={onShowSizeChange}
+          defaultCurrent={1}
+          total={meta?.total}
+          pageSize={limit}
+        />
+      </div>
       {/* Modal for full objectives */}
       <Modal
         title="🎯 Full Objectives"

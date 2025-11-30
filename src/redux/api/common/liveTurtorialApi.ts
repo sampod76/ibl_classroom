@@ -50,7 +50,7 @@ export const LiveTutorialApi = baseApi.injectEndpoints({
     }),
     // update ac department
     updateLiveTutorial: build.mutation({
-      query: ({ data, id }) => {
+      query: ({ data, id }: { data: Record<string, any>; id: string }) => {
         return {
           url: `${URL}/${id}`,
           method: "PATCH",
