@@ -13,6 +13,7 @@ export interface UserState {
   exp: number;
   iat: number;
   accessToken?: string;
+  modifyRole: keyof typeof USER_ROLE;
 }
 export interface TokenUserRole {
   data?: UserState;
@@ -45,6 +46,8 @@ export const userRoleSlice = createSlice({
           exp: payload.data?.exp,
           iat: payload.data?.iat,
           accessToken: payload.data?.accessToken,
+          modifyRole:
+            payload.data.role == "seller" ? "teacher" : payload.data.role,
         };
       }
       if (typeof payload.isLoading !== "undefined") {
