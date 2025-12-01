@@ -14,9 +14,20 @@ import {
   Video,
   VideoIcon,
   Book,
+  Delete,
+  MoreVertical,
 } from "lucide-react";
 
-import { Collapse, Dropdown, Modal, Pagination, Tooltip } from "antd";
+import {
+  Collapse,
+  Dropdown,
+  Modal,
+  Pagination,
+  Popconfirm,
+  Tooltip,
+  Button as AntButton,
+  message,
+} from "antd";
 import React, { useMemo, useState } from "react";
 import AssignmentDialog from "./AssignmentDialog";
 import LectureNotesDialog from "./LectureNotesDialog";
@@ -24,14 +35,22 @@ import TutorialDialog from "./LiveTutorialDialog";
 import { useAppSelector } from "@/redux/hooks";
 import { saveAs } from "file-saver";
 import { useSearchParams } from "next/navigation";
-import { useGetAllTopicsQuery } from "@/redux/api/teacher/topicsApi";
+import {
+  useDeleteTopicsMutation,
+  useGetAllTopicsQuery,
+} from "@/redux/api/teacher/topicsApi";
 import { LoadingSkeleton } from "@/components/ui/skeleton";
 import { DateFormatterDayjsOop } from "@/utils/DateAllUtlsFuntion";
 import Link from "next/link";
 import fileObjectToLink from "@/utils/fileObjectToLink";
 import ModalComponent from "@/components/modal/ModalComponents";
 import CreateUpdateTopicsCom from "../topics/createUpdateTopicsCom";
-import { ILectureNote } from "@/redux/api/common/lectureNoteApi";
+import {
+  ILectureNote,
+  useDeleteLectureNoteMutation,
+} from "@/redux/api/common/lectureNoteApi";
+import { ErrorModal } from "@/utils/modalHook";
+import { useDeleteLiveTutorialMutation } from "@/redux/api/common/liveTurtorialApi";
 
 const shortenName = (name: string, max = 20) =>
   name.length <= max ? name : name.substring(0, max) + "...";
@@ -50,6 +69,8 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
       subjectId,
       limit,
       page,
+      sortBy: "serial_number",
+      sortOrder: "asc",
     }),
     [subjectId, limit, page]
   );
@@ -59,6 +80,11 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
   const { data, isLoading, isFetching } = useGetAllTopicsQuery(query, {
     skip: !Boolean(subjectId),
   });
+  const [deleteTopics, { isLoading: dtloading }] = useDeleteTopicsMutation();
+  const [deleteLiveTutorial, { isLoading: dliveTutorial }] =
+    useDeleteLiveTutorialMutation();
+  const [deleteLacture, { isLoading: lectureloading }] =
+    useDeleteLectureNoteMutation();
 
   const [openModal, setOpenModal] = useState(false);
   const [modalObjectives, setModalObjectives] = useState<{ title: string }[]>(
@@ -88,6 +114,30 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
       } catch (err) {
         console.error("Download failed:", err);
       }
+    }
+  };
+  const topicDelete = async (id: string) => {
+    try {
+      const res = await deleteTopics(id).unwrap();
+      message.success("Successfully Delete");
+    } catch (error) {
+      ErrorModal(error);
+    }
+  };
+  const liveTotureDelete = async (id: string) => {
+    try {
+      const res = await deleteLiveTutorial(id).unwrap();
+      message.success("Successfully Delete");
+    } catch (error) {
+      ErrorModal(error);
+    }
+  };
+  const lactureDelete = async (id: string) => {
+    try {
+      const res = await deleteLacture(id).unwrap();
+      message.success("Successfully Delete");
+    } catch (error) {
+      ErrorModal(error);
     }
   };
 
@@ -217,6 +267,25 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
                   defaultValue={topic}
                 />
               </ModalComponent>
+              <Popconfirm
+                placement="topLeft"
+                title={"Are you sure you want to delete this unit?"}
+                description={
+                  "This action cannot be undone. Do you really want to delete this unit?"
+                }
+                okText="Yes"
+                cancelText="No"
+                onConfirm={() => topicDelete(topic._id)} // <-- এখানে আসল delete
+              >
+                <AntButton
+                  loading={dtloading}
+                  type="primary"
+                  className="gap-2 !bg-red-500 !text-white"
+                >
+                  <Delete className="h-4 w-4" />
+                  Delete Unit
+                </AntButton>
+              </Popconfirm>
             </div>
           )}
         </div>
@@ -255,20 +324,82 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
             <Card key={idx} className="p-4 hover:shadow-md transition relative">
               {/* ✏️ Edit Button - TOP RIGHT CORNER */}
 
-              <ModalComponent
-                button={
+              <div className="absolute -top-1 cursor-pointer right-0 p-2 rounded-full hover:bg-gray-200 transition shadow-sm bg-red-200">
+                <Dropdown
+                  trigger={["hover"]}
+                  menu={{
+                    items: [
+                      {
+                        key: "edit",
+                        label: (
+                          <ModalComponent
+                            button={
+                              <button
+                                // <-- তোমার এডিট ফাংশন
+                                className=" cursor-pointer p-2  hover:bg-gray-200 transition shadow-sm bg-red-200"
+                              >
+                                <Tooltip title="Edit Live Tutorial">
+                                  <AntButton
+                                    type="primary"
+                                    className="gap-2 !bg-green-500 !text-white"
+                                  >
+                                    <Edit2 className="h-4 w-4   text-gray-800 " />
+                                    Edit
+                                  </AntButton>
+                                </Tooltip>
+                              </button>
+                            }
+                          >
+                            <TutorialDialog
+                              topicId={topic._id}
+                              defaultValues={tutorial}
+                            />
+                          </ModalComponent>
+                        ),
+                      },
+                      {
+                        key: "delete",
+                        label: (
+                          <Popconfirm
+                            placement="topLeft"
+                            title={"Are you sure you want to delete this ?"}
+                            description={
+                              "This action cannot be undone. Do you really want to delete this?"
+                            }
+                            okText="Yes"
+                            cancelText="No"
+                            onConfirm={() => liveTotureDelete(tutorial._id)} // <-- এখানে আসল delete
+                          >
+                            <AntButton
+                              loading={dtloading}
+                              type="primary"
+                              className="gap-2 !bg-red-500 !text-white"
+                            >
+                              <Delete className="h-4 w-4" />
+                              Delete
+                            </AntButton>
+                          </Popconfirm>
+                        ),
+                      },
+                    ],
+                    onClick: ({ key }) => {
+                      if (key === "edit") {
+                        // Modal open হবে (ModalComponent handle করবে)
+                      }
+                    },
+                  }}
+                  placement="bottomRight"
+                >
                   <button
-                    // <-- তোমার এডিট ফাংশন
-                    className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 transition shadow-sm bg-red-200"
+                    className="absolute -top-1 right-0 p-2 rounded-full hover:bg-gray-200 
+        transition shadow-sm bg-white border cursor-pointer"
                   >
-                    <Tooltip title="Edit Live Tutorial">
-                      <Edit2 className="h-4 w-4   text-gray-800 " />
+                    <Tooltip title="Options">
+                      <MoreVertical className="h-5 w-5 text-gray-700" />
                     </Tooltip>
                   </button>
-                }
-              >
-                <TutorialDialog topicId={topic._id} defaultValues={tutorial} />
-              </ModalComponent>
+                </Dropdown>
+              </div>
 
               <div className="flex items-start gap-4">
                 <div className="flex flex-col h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
@@ -345,23 +476,79 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
           {/* Lecture Notes */}
           {topic?.lectureNotes?.map((lecture: ILectureNote, idx: number) => (
             <Card key={idx} className="p-4 hover:shadow-md transition relative">
-              <ModalComponent
-                button={
+              <div className="absolute -top-1 cursor-pointer right-0 p-2 rounded-full hover:bg-gray-200 transition shadow-sm bg-red-200">
+                <Dropdown
+                  trigger={["hover"]}
+                  menu={{
+                    items: [
+                      {
+                        key: "edit",
+                        label: (
+                          <ModalComponent
+                            button={
+                              <button
+                                // <-- তোমার এডিট ফাংশন
+                                className=" p-2  hover:bg-gray-200 transition shadow-sm bg-red-200"
+                              >
+                                <Tooltip title="Edit Live Tutorial">
+                                  <div className="flex justify-between items-center gap-1">
+                                    <Edit2 className="h-4 w-4   text-gray-800 " />
+                                    Edit
+                                  </div>
+                                </Tooltip>
+                              </button>
+                            }
+                          >
+                            <LectureNotesDialog
+                              topicId={topic._id}
+                              defaultValues={lecture}
+                            />
+                          </ModalComponent>
+                        ),
+                      },
+                      {
+                        key: "delete",
+                        label: (
+                          <Popconfirm
+                            placement="topLeft"
+                            title={"Are you sure you want to delete this ?"}
+                            description={
+                              "This action cannot be undone. Do you really want to delete this?"
+                            }
+                            okText="Yes"
+                            cancelText="No"
+                            onConfirm={() => lactureDelete(lecture._id)} // <-- এখানে আসল delete
+                          >
+                            <AntButton
+                              loading={dtloading}
+                              type="primary"
+                              className="gap-2 !bg-red-500 !text-white"
+                            >
+                              <Delete className="h-4 w-4" />
+                              Delete
+                            </AntButton>
+                          </Popconfirm>
+                        ),
+                      },
+                    ],
+                    onClick: ({ key }) => {
+                      if (key === "edit") {
+                        // Modal open হবে (ModalComponent handle করবে)
+                      }
+                    },
+                  }}
+                  placement="bottomRight"
+                >
                   <button
-                    // <-- তোমার এডিট ফাংশন
-                    className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 transition shadow-sm bg-red-200"
+                    className="absolute -top-1 right-0 p-2 rounded-full hover:bg-gray-200 
+        transition shadow-sm bg-white border cursor-pointer"
                   >
-                    <Tooltip title="Edit Live Tutorial">
-                      <Edit2 className="h-4 w-4   text-gray-800 " />
+                    <Tooltip title="Options">
+                      <MoreVertical className="h-5 w-5 text-gray-700" />
                     </Tooltip>
                   </button>
-                }
-              >
-                <LectureNotesDialog
-                  topicId={topic._id}
-                  defaultValues={lecture}
-                />
-              </ModalComponent>
+                </Dropdown>
+              </div>
               <div className="flex items-start gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600/10">
                   <Book className="h-5 w-5 text-black" />
