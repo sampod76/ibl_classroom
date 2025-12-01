@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/features/user/userRoleSlice";
 import { signoutSession } from "@/lib/auth_server";
 import { LoadingSkeleton } from "../ui/skeleton";
+import { Alert } from "antd";
 
 export default function ClassRoomViewCom({
   classRoomId,
@@ -39,7 +40,22 @@ export default function ClassRoomViewCom({
   return (
     <div className="min-h-screen bg-background">
       {/* Role Switcher - Demo purposes */}
-
+      <div className="overflow-hidden whitespace-nowrap">
+        <Alert
+          type="info"
+          message={
+            <span className="inline-block animate-marquee">
+              🔔 <strong>Important:</strong> Please add your subjects using the
+              subject code
+              <code className="mx-1 px-1 py-0.5 bg-gray-200 rounded text-xs">
+                +Add Subject
+              </code>
+              after joining. Otherwise, your subjects will not be visible.
+            </span>
+          }
+          showIcon
+        />
+      </div>
       <ClassroomHeader classRoomId={classRoomId} />
       <div className="container mx-auto px-4 py-6">
         {activeTab === "stream" && (

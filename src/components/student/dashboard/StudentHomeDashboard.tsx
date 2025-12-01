@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -17,6 +18,7 @@ import {
 } from "@/redux/api/student/crStudentAccessClassroomApi";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
+import Link from "next/link";
 
 interface JoinClassroomFormValues {
   classRoomCode: string;
@@ -58,14 +60,28 @@ export default function StudentHomeDashboard() {
   return (
     <>
       <div className="flex flex-col items-center justify-center">
-        <Card title="Join a Classroom" className="min-w-md  mx-auto mt-10">
+        <Card
+          title={
+            <div>
+              <p className="font-semibold text-lg text-center">
+                Join Classroom
+              </p>
+              <p className="text-sm text-gray-600 ">
+                If you are already join, you don't need to enter the classroom
+                code again. Simply go to the <strong>Classroom</strong> tab to
+                continue.
+              </p>
+            </div>
+          }
+          className="min-w-md  mx-auto mt-10"
+        >
           <Form<JoinClassroomFormValues>
             layout="vertical"
             form={form}
             onFinish={onFinish}
           >
             <Form.Item
-              label="Classroom Code"
+              label="Enter Classroom Code"
               name="classCode"
               rules={[
                 { required: true, message: "Please input classroom code" },
@@ -89,6 +105,14 @@ export default function StudentHomeDashboard() {
             </Button>
           </Form>
         </Card>
+        <div>
+          <Link
+            href={`/dashboard/${userRole}/classroom`}
+            className="inline-flex items-center gap-2 mt-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm"
+          >
+            Go to Classroom
+          </Link>
+        </div>
         <div className="shadow-sm rounded-2xl bg-white p-6 mt-10">
           <h1 className="text-2xl font-bold mb-4">Pending Classrooms</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
