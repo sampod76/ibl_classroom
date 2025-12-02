@@ -3,7 +3,7 @@ import { tagTypes } from "@/redux/tag-types";
 import { IMeta } from "@/types";
 import { baseApi } from "../baseApi";
 
-const URL = "/cr-teacher-access-classroom";
+const URL = "/cr-assignment";
 
 export const AssignmentClassroomApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -18,7 +18,7 @@ export const AssignmentClassroomApi = baseApi.injectEndpoints({
       },
       transformResponse: (response: any) => {
         return {
-          data: response.data as IClassroomData[],
+          data: response.data as IAssignment[],
           meta: response.meta as IMeta,
         };
       },
@@ -32,7 +32,7 @@ export const AssignmentClassroomApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      transformResponse: (response: any) => response.data as IClassroomData,
+      transformResponse: (response: any) => response.data as IAssignment,
       providesTags: [tagTypes.assignment],
     }),
 
@@ -42,18 +42,18 @@ export const AssignmentClassroomApi = baseApi.injectEndpoints({
         return {
           url: URL,
           method: "POST",
-          data,
+          body: data,
         };
       },
       invalidatesTags: [tagTypes.assignment],
     }),
     // update ac department
     updateAssignmentClassroom: build.mutation({
-      query: ({ data, id }) => {
+      query: ({ data, id }: { data: any; id: string }) => {
         return {
           url: `${URL}/${id}`,
           method: "PATCH",
-          data: data,
+          body: data,
         };
       },
       invalidatesTags: [tagTypes.assignment],
@@ -79,16 +79,45 @@ export const {
   useUpdateAssignmentClassroomMutation,
 } = AssignmentClassroomApi;
 
-type IClassroomData = {
+export interface IAssignment {
   _id: string;
-  classRoomDetails: {
-    _id: string;
-    name: string;
-    classRoomCategoryId: string;
-    description: string;
-    classCode: string;
-    bannerImage: { url: string };
-    status: string;
-    createdAt: string;
-  }[];
-};
+  title: string;
+  author: Author;
+  classRoomId: string;
+  subjectId: string;
+  topicId: string;
+  totalMark: number;
+  passMark: number;
+  startDate: string;
+  endDate: string;
+  instructions: Instruction[];
+  attachments: Attachment[];
+  serial_number: number;
+  status: string;
+  isDelete: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+interface Author {
+  role: string;
+  userId: string;
+  roleBaseUserId: string;
+}
+
+interface Instruction {
+  title: string;
+  _id: string;
+}
+
+interface Attachment {
+  url: string;
+  mimetype: string;
+  filename: string;
+  path: string;
+  cdn: string;
+  platform: string;
+  createdAt: string;
+  updatedAt: string;
+}

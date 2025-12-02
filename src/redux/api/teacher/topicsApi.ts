@@ -2,6 +2,7 @@
 import { tagTypes } from "@/redux/tag-types";
 import { IMeta } from "@/types";
 import { baseApi } from "../baseApi";
+import { IAssignment } from "../common/assignmentApi";
 
 const URL = "/cr-topics";
 
@@ -94,6 +95,7 @@ export interface ITopis {
   __v: number;
   lectureNotes: LectureNote[];
   liveTutorials: LiveTutorial[];
+  assignmentList: IAssignment[];
 }
 
 interface Author {
