@@ -16,6 +16,7 @@ import {
   Book,
   Delete,
   MoreVertical,
+  Send,
 } from "lucide-react";
 
 import {
@@ -27,9 +28,10 @@ import {
   Tooltip,
   Button as AntButton,
   message,
+  Popover,
 } from "antd";
 import React, { useMemo, useState } from "react";
-import AssignmentDialog from "./AssignmentDialog";
+import CreateAssignmentForm from "./CreateAssignmentDialog";
 import LectureNotesDialog from "./LectureNotesDialog";
 import TutorialDialog from "./LiveTutorialDialog";
 import { useAppSelector } from "@/redux/hooks";
@@ -51,7 +53,25 @@ import {
 } from "@/redux/api/common/lectureNoteApi";
 import { ErrorModal } from "@/utils/modalHook";
 import { useDeleteLiveTutorialMutation } from "@/redux/api/common/liveTurtorialApi";
+import { useDeleteAssignmentClassroomMutation } from "@/redux/api/common/assignmentApi";
+import dayjs from "dayjs";
+import AssignmentForm from "./CreateAssignmentDialog";
+const tooltipMessage = (
+  <div className="p-2 max-w-[220px]">
+    <p className="font-semibold text-gray-800 text-sm">
+      ⏳ Submission Feature Coming Soon!
+    </p>
 
+    <p className="text-xs text-gray-600 mt-1 leading-tight">
+      Our team is currently working to activate this feature.
+      <br />
+      Please stay tuned — we&apos;ll release it very soon 😊
+      <br />
+      Meanwhile, stay focused on your assignment. This feature will be available
+      later today!
+    </p>
+  </div>
+);
 const shortenName = (name: string, max = 20) =>
   name.length <= max ? name : name.substring(0, max) + "...";
 
@@ -85,6 +105,8 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
     useDeleteLiveTutorialMutation();
   const [deleteLacture, { isLoading: lectureloading }] =
     useDeleteLectureNoteMutation();
+  const [deleteAssignment, { isLoading: loadingDelete }] =
+    useDeleteAssignmentClassroomMutation();
 
   const [openModal, setOpenModal] = useState(false);
   const [modalObjectives, setModalObjectives] = useState<{ title: string }[]>(
@@ -119,6 +141,14 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
   const topicDelete = async (id: string) => {
     try {
       const res = await deleteTopics(id).unwrap();
+      message.success("Successfully Delete");
+    } catch (error) {
+      ErrorModal(error);
+    }
+  };
+  const deleteAssignmentFun = async (id: string) => {
+    try {
+      const res = await deleteAssignment(id).unwrap();
       message.success("Successfully Delete");
     } catch (error) {
       ErrorModal(error);
@@ -241,7 +271,7 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
                             </div>
                           }
                         >
-                          <AssignmentDialog topicId={topic._id} />
+                          <CreateAssignmentForm topicId={topic._id} />
                         </ModalComponent>
                       ),
                     },
@@ -294,17 +324,49 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
         <div className="space-y-4 mt-3">
           {/* Objectives */}
           <Card className="p-4">
-            <h4 className="font-semibold mb-2 text-foreground">
-              🎯 Objectives
-            </h4>
+            <div
+              className="relative mt-3 rounded-md"
+              style={{
+                border: "2px solid #e5e7eb", // light gray border
+                padding: "14px 16px",
+                borderRadius: "8px",
+              }}
+            >
+              {/* Legend Style */}
+              <span
+                style={{
+                  fontWeight: "600",
+                  padding: "0 8px",
+                  background: "white",
+                  position: "absolute",
+                  top: "-10px",
+                  left: "14px",
+                  fontSize: "13px",
+                  color: "#4b5563", // slate-600
+                }}
+              >
+                🎯 Objectives
+              </span>
 
-            <ul className="list-disc pl-6 text-sm text-muted-foreground">
-              {topic.objective.slice(0, 2).map((obj: any, idx: number) => (
-                <li key={idx} className="line-clamp-1">
-                  {obj.title}
-                </li>
-              ))}
-            </ul>
+              {/* Your List */}
+              <ul className="pl-6 text-sm text-muted-foreground space-y-1 mt-1">
+                {topic.objective.slice(0, 2).map((obj: any, idx: number) => (
+                  <li
+                    key={idx}
+                    className="relative pl-3 line-clamp-1"
+                    style={{ display: "block" }} // ensures line clamp works properly
+                  >
+                    {/* Custom bullet */}
+                    <span
+                      className="absolute left-0 top-2 w-1.5 h-1.5 rounded-full bg-gray-500"
+                      aria-hidden="true"
+                    ></span>
+
+                    {obj.title}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             {topic.objective.length > 2 && (
               <button
@@ -603,6 +665,247 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
               </div>
             </Card>
           ))}
+          {topic?.assignmentList?.map((assignment: any, idx: number) => (
+            <Card key={idx} className="p-4 hover:shadow-md transition relative">
+              {/* MORE OPTIONS BUTTON */}
+              <div
+                className="absolute -top-1 right-0 p-2 rounded-full hover:bg-gray-200 
+        transition shadow-sm bg-white border cursor-pointer"
+              >
+                <Dropdown
+                  trigger={["hover"]}
+                  placement="bottomRight"
+                  menu={{
+                    items: [
+                      {
+                        key: "edit",
+                        label: (
+                          <ModalComponent
+                            button={
+                              <button className="p-2 hover:bg-gray-200 transition shadow-sm bg-white flex items-center gap-1">
+                                <Edit2 className="h-4 w-4 text-gray-700" />
+                                Edit
+                              </button>
+                            }
+                          >
+                            <AssignmentForm
+                              topicId={topic._id}
+                              defaultValues={assignment}
+                            />
+                          </ModalComponent>
+                        ),
+                      },
+                      {
+                        key: "delete",
+                        label: (
+                          <Popconfirm
+                            placement="topLeft"
+                            title={"Delete this assignment?"}
+                            description={"This action cannot be undone."}
+                            okText="Yes"
+                            cancelText="No"
+                            onConfirm={() =>
+                              deleteAssignmentFun(assignment._id)
+                            }
+                          >
+                            <AntButton
+                              loading={loadingDelete}
+                              type="primary"
+                              className="gap-2 !bg-red-500 !text-white"
+                            >
+                              <Delete className="h-4 w-4" />
+                              Delete
+                            </AntButton>
+                          </Popconfirm>
+                        ),
+                      },
+                    ],
+                  }}
+                >
+                  <Tooltip title="Options">
+                    <MoreVertical className="h-5 w-5 text-gray-700" />
+                  </Tooltip>
+                </Dropdown>
+              </div>
+
+              {/* CARD CONTENT */}
+              <div className="flex items-start gap-4">
+                {/* Left Icon */}
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/10">
+                  <ClipboardList className="h-5 w-5 text-blue-700" />
+                </div>
+
+                {/* Right Content */}
+                <div className="flex-1">
+                  {/* TITLE */}
+                  <h4 className="font-semibold flex items-center gap-2">
+                    {assignment.title}
+
+                    {assignment.author?.userId === UserData?.userId && (
+                      <span className="text-xs px-2 py-0.5 rounded-md bg-green-100 text-green-600 font-medium">
+                        Your Assignment
+                      </span>
+                    )}
+                  </h4>
+
+                  {/* Marks */}
+                  <p className="text-sm text-muted-foreground mt-1">
+                    <b>Total:</b> {assignment.totalMark} | <b>Pass:</b>{" "}
+                    {assignment.passMark}
+                  </p>
+
+                  {/* Timeline */}
+                  <p className="text-xs flex gap-3 items-center text-gray-500 my-1">
+                    <span>
+                      {" "}
+                      📅 Start:{" "}
+                      {dayjs(assignment.startDate).format(
+                        "MMM D, YYYY - hh:mm A"
+                      )}
+                    </span>
+                    <span>
+                      ⏳ End:{" "}
+                      {dayjs(assignment.endDate).format(
+                        "MMM D, YYYY - hh:mm A"
+                      )}
+                    </span>
+                  </p>
+
+                  {/* Instructions */}
+                  {/* {assignment.instructions?.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium text-gray-700">
+                        Instructions:
+                      </p>
+                      <ul className="list-disc list-inside text-xs text-gray-600">
+                        {assignment.instructions.map((inst: any, i: number) => (
+                          <li key={i}>{inst.title}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )} */}
+                  <div
+                    className="relative mt-3 rounded-md"
+                    style={{
+                      border: "2px solid #ddd",
+                      padding: "10px 14px",
+                      borderRadius: "6px",
+                    }}
+                  >
+                    {/* Legend */}
+                    <span
+                      style={{
+                        fontWeight: "600",
+                        padding: "0 8px",
+                        background: "white",
+                        position: "absolute",
+                        top: "-10px",
+                        left: "12px",
+                        fontSize: "12px",
+                        color: "#555",
+                      }}
+                    >
+                      Instructions
+                    </span>
+
+                    {/* List */}
+                    <ul className="pl-6 text-sm text-muted-foreground space-y-1 mt-1">
+                      {assignment.instructions
+                        .slice(0, 2)
+                        .map((obj: any, idx: number) => (
+                          <li
+                            key={idx}
+                            className="relative pl-3 line-clamp-1"
+                            style={{ display: "block" }}
+                          >
+                            {/* Custom bullet */}
+                            <span
+                              className="absolute left-0 top-1.5 w-1.5 h-1.5 rounded-full bg-gray-600"
+                              aria-hidden="true"
+                            ></span>
+
+                            {obj.title}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+
+                  {assignment.instructions.length > 2 && (
+                    <button
+                      onClick={() => {
+                        setModalObjectives(assignment.instructions);
+                        setOpenModal(true);
+                      }}
+                      className="text-blue-600 text-sm mt-2 hover:underline"
+                    >
+                      See more
+                    </button>
+                  )}
+
+                  {/* Attachments */}
+                  {assignment.attachments?.length > 0 && (
+                    <div className="mt-3">
+                      {/* Download All */}
+                      <button
+                        onClick={() => downloadAllFiles(assignment.attachments)}
+                        className="text-xs mb-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      >
+                        Download All
+                      </button>
+
+                      {/* Individual files */}
+                      <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+                        {assignment.attachments.map((file: any, i: number) => (
+                          <a
+                            key={i}
+                            href={fileObjectToLink(file)}
+                            target="_blank"
+                            className="flex items-center gap-1 hover:text-blue-600 transition"
+                          >
+                            <File className="h-3.5 w-3.5" />
+                            <span className="truncate max-w-[120px]">
+                              {shortenName(file.filename)}
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <Tooltip
+                    title={tooltipMessage}
+                    placement="top"
+                    overlayStyle={{
+                      backdropFilter: "blur(12px)",
+                      WebkitBackdropFilter: "blur(12px)",
+                    }}
+                    overlayInnerStyle={{
+                      background: "rgba(255, 255, 255, 0.5)", // tailwind: bg-white/50
+                      color: "black",
+                      border: "1px solid rgba(255,255,255,0.4)", // tailwind: border-white/40
+                      borderRadius: "0.75rem", // tailwind: rounded-xl
+                      boxShadow: "0 4px 20px rgba(0,0,0,0.1)", // tailwind: shadow-xl
+                      padding: "10px 14px",
+                    }}
+                  >
+                    <button
+                      onClick={() => {}}
+                      className="
+          mt-4 px-6 py-3 rounded-xl font-semibold
+          !bg-gradient-to-r from-indigo-500 to-purple-600
+          text-white shadow-md
+          hover:shadow-xl hover:-translate-y-0.5
+          transition-all duration-200 
+          flex items-center gap-2 text-lg
+        "
+                    >
+                      <Send className="w-5 h-5 text-white" />
+                      Submit Assignment
+                    </button>
+                  </Tooltip>
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
       </div>
     ),
@@ -641,13 +944,15 @@ export default function TopicList({ classRoomId }: { classRoomId: string }) {
         footer={null}
         onCancel={() => setOpenModal(false)}
       >
-        <ul className="list-disc pl-6 text-sm text-muted-foreground">
-          {modalObjectives.map((obj, idx) => (
-            <li key={idx} className="mb-1">
-              {obj.title}
-            </li>
-          ))}
-        </ul>
+        <div className="block">
+          <ul className="list-disc list-inside pl-4 text-sm text-muted-foreground">
+            {modalObjectives.map((obj, idx) => (
+              <li key={idx} className="mb-1">
+                {obj.title}
+              </li>
+            ))}
+          </ul>
+        </div>
       </Modal>
     </div>
   );
