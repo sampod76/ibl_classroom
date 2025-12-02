@@ -45,7 +45,7 @@ export const AssignmentClassroomApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags: [tagTypes.assignment],
+      invalidatesTags: [tagTypes.assignment, tagTypes.Topics],
     }),
     // update ac department
     updateAssignmentClassroom: build.mutation({
@@ -56,7 +56,7 @@ export const AssignmentClassroomApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags: [tagTypes.assignment],
+      invalidatesTags: [tagTypes.assignment, tagTypes.Topics],
     }),
 
     // delete ac department
@@ -65,7 +65,7 @@ export const AssignmentClassroomApi = baseApi.injectEndpoints({
         url: `${URL}/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [tagTypes.assignment],
+      invalidatesTags: [tagTypes.assignment, tagTypes.Topics],
     }),
   }),
   overrideExisting: true,
