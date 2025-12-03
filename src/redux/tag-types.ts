@@ -9,6 +9,8 @@ export enum tagTypes {
   LectureNote = "LectureNote",
   LiveTutorial = "LiveTutorial",
   Subject = "Subject",
+  seller = "seller",
+  user = "user",
 }
 
 export const tagTypesList = Object.values(tagTypes);
