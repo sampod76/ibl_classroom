@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useAppSelector } from "@/redux/hooks";
@@ -5,6 +6,8 @@ import fileObjectToLink from "@/utils/fileObjectToLink";
 import { BookOpen, Calendar, ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useDeleteTeacherAccessClassroomMutation } from "@/redux/api/teacher/TeacherAccessClassroomApi";
+import { Button, message, Modal } from "antd";
 
 type IRoom = {
   _id: string;
@@ -17,9 +20,43 @@ type IRoom = {
   createdAt: string;
 };
 
-export default function ClassroomCard({ room }: { room: IRoom }) {
+export default function ClassroomCard({
+  room,
+  sellerId,
+  accessClassRoomId,
+}: {
+  room: IRoom;
+  sellerId?: string;
+  accessClassRoomId?: string;
+}) {
+  const [deleteTeacherAccessClassroom, { isLoading }] =
+    useDeleteTeacherAccessClassroomMutation();
   const { data: UserInfo } = useAppSelector((state) => state.userInfo);
+  const role = UserInfo?.role === "seller" ? "teacher" : UserInfo?.role;
+  const handleDelete = () => {
+    Modal.confirm({
+      title: "Are you sure?",
+      content: "Do you really want to remove this teacher from this classroom?",
+      okText: "Yes, Remove",
+      cancelText: "Cancel",
+      okButtonProps: {
+        className: "!bg-red-600 hover:!bg-red-700",
+      },
 
+      async onOk() {
+        try {
+          if (!accessClassRoomId) return;
+          const res = await deleteTeacherAccessClassroom(
+            accessClassRoomId
+          ).unwrap();
+
+          message.success("Teacher removed successfully");
+        } catch (error: any) {
+          message.error(error?.data?.message || "Failed to remove teacher");
+        }
+      },
+    });
+  };
   return (
     <div className="w-full">
       <div
@@ -92,31 +129,52 @@ export default function ClassroomCard({ room }: { room: IRoom }) {
             </span>
           </div>
 
-          {/* Button */}
-          {room.status === "active" ? (
-            <Link
-              href={`/dashboard/${
-                UserInfo?.role == "seller" ? "teacher" : UserInfo?.role
-              }/classroom/${room._id}?classCode=${room.classCode}&classRoom=${
-                room.name
-              }`}
-              className="w-full flex items-center justify-center gap-2 text-white 
-              py-2.5 sm:py-3 rounded-xl text-sm font-semibold bg-indigo-600 
-              hover:bg-indigo-700 transition shadow-md hover:shadow-lg"
-            >
-              <Eye className="w-4 h-4" />
-              View Classroom
-              <ChevronRight className="w-4 h-4" />
-            </Link>
+          {sellerId && role === "admin" ? (
+            <div className="flex w-full items-center gap-3">
+              <Button
+                danger
+                loading={isLoading}
+                onClick={() => handleDelete()}
+                className="flex-1 !py-2.5 !rounded-lg shadow-sm"
+              >
+                Remove
+              </Button>
+
+              <button
+                className="flex-1 px-4 py-2.5 rounded-lg bg-blue-600 text-white font-medium 
+      hover:bg-blue-700 transition shadow-sm"
+              >
+                Subject List
+              </button>
+            </div>
           ) : (
-            <button
-              disabled
-              className="w-full flex items-center justify-center gap-2 py-2.5 
-                bg-gray-200 text-gray-500 rounded-xl cursor-not-allowed"
-            >
-              <Eye className="w-4 h-4 opacity-50" />
-              Classroom is {room.status}
-            </button>
+            <>
+              {room.status === "active" ? (
+                <Link
+                  href={`/dashboard/${
+                    UserInfo?.role == "seller" ? "teacher" : UserInfo?.role
+                  }/classroom/${room._id}?classCode=${
+                    room.classCode
+                  }&classRoom=${room.name}`}
+                  className="w-full flex items-center justify-center gap-2 text-white 
+             py-2.5 sm:py-3 rounded-xl text-sm font-semibold bg-indigo-600 
+             hover:bg-indigo-700 transition shadow-md hover:shadow-lg"
+                >
+                  <Eye className="w-4 h-4" />
+                  View Classroom
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              ) : (
+                <button
+                  disabled
+                  className="w-full flex items-center justify-center gap-2 py-2.5 
+               bg-gray-200 text-gray-500 rounded-xl cursor-not-allowed"
+                >
+                  <Eye className="w-4 h-4 opacity-50" />
+                  Classroom is {room.status}
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

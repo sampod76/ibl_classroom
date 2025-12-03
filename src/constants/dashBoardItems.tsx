@@ -93,7 +93,57 @@ export const dashboardItems = (
       key: `/${safeRole}/support`,
     },
   ];
+  const adminSidebar: MenuProps["items"] = [...sellerSidebar];
+
+  adminSidebar.splice(
+    2,
+    0, // deleteCount = 0 → কিছু রিমুভ হবে না
+    {
+      label: "User List",
+      key: "user",
+      icon: <UserOutlined />,
+      children: [
+        {
+          label: "Teacher",
+          key: "Teacher",
+          icon: <UserOutlined />,
+          children: [
+            {
+              label: (
+                <Link
+                  onClick={() => setCollapsed?.(false)}
+                  href={`/dashboard/${safeRole}/teacher-list`}
+                >
+                  Teacher List
+                </Link>
+              ),
+              key: `/dashboard/${safeRole}/teacher-list`,
+            },
+          ],
+        },
+        {
+          label: "Student",
+          key: "student",
+          icon: <UserOutlined />,
+          children: [
+            {
+              label: (
+                <Link
+                  onClick={() => setCollapsed?.(false)}
+                  href={`/dashboard/${safeRole}/student-list`}
+                >
+                  Student List
+                </Link>
+              ),
+              key: `/dashboard/${safeRole}/student-list`,
+            },
+          ],
+        },
+      ],
+    }
+  );
 
   if (role === USER_ROLE.student) return studentSidebar;
   if (role === USER_ROLE.seller) return sellerSidebar;
+  if (role === USER_ROLE.admin) return adminSidebar;
 };

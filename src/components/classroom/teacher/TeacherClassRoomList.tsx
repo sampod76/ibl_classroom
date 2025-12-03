@@ -1,11 +1,31 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { LoadingSkeleton } from "@/components/ui/skeleton";
 import { BookOpen } from "lucide-react";
 import { useAppSelector } from "@/redux/hooks";
-import { useGetAllTeacherAccessClassroomQuery } from "@/redux/api/teacher/TeacherAccessClassroomApi";
+import {
+  useAddTeacherAccessClassroomMutation,
+  useGetAllTeacherAccessClassroomQuery,
+} from "@/redux/api/teacher/TeacherAccessClassroomApi";
 import ClassroomCard from "../classroom-card";
+import { useSearchParams } from "next/navigation";
+import { Button, Card, Form, Input, message } from "antd";
+import { Success_model } from "@/utils/modalHook";
+import ModalComponent from "@/components/modal/ModalComponents";
+import JoinClass from "./JoinClass";
+interface JoinClassroomFormValues {
+  classRoomCode: string;
+}
 
-export default function TeacherClassRoomList() {
+export default function TeacherClassRoomList({
+  sellerId,
+}: {
+  sellerId?: string;
+}) {
+  const [form] = Form.useForm<JoinClassroomFormValues>();
+  const searchParams = useSearchParams();
+  const roleBaseUserId = searchParams.get("roleBaseUserId");
   const { data: UserInfo, isLoading: UserInfoLoading } = useAppSelector(
     (state) => state.userInfo
   );
@@ -14,6 +34,7 @@ export default function TeacherClassRoomList() {
     page: 1,
     limit: 60,
     status: "active",
+    sellerId: sellerId ? sellerId : undefined,
   };
 
   const { data, isLoading } = useGetAllTeacherAccessClassroomQuery(query);
@@ -24,9 +45,25 @@ export default function TeacherClassRoomList() {
 
   return (
     <>
-      <h1 className="text-2xl sm:text-3xl font-bold text-center my-6">
-        My Classrooms
-      </h1>
+      <div className="relative mb-6">
+        {/* CENTER TITLE */}
+        <h1 className="text-2xl sm:text-3xl font-bold text-center border-b-2 pb-2">
+          Classrooms
+        </h1>
+
+        {/* ADD BUTTON ON RIGHT */}
+        <div className="absolute right-0 top-0">
+          <ModalComponent
+            button={
+              <Button type="primary" icon={<span className="text-xl">＋</span>}>
+                Add Classroom
+              </Button>
+            }
+          >
+            <JoinClass sellerId={sellerId} />
+          </ModalComponent>
+        </div>
+      </div>
 
       {/* 🔥 FULL RESPONSIVE GRID */}
       <div
@@ -53,7 +90,14 @@ export default function TeacherClassRoomList() {
           <>
             {classRoom.map((item) => {
               const room = item?.classRoomDetails[0];
-              return <ClassroomCard key={item._id} room={room} />;
+              return (
+                <ClassroomCard
+                  accessClassRoomId={item._id}
+                  sellerId={sellerId}
+                  key={item._id}
+                  room={room}
+                />
+              );
             })}
           </>
         )}
