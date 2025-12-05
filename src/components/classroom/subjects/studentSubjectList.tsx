@@ -37,7 +37,6 @@ export default function StudentSubjectList({
       skip: !Boolean(classRoomId),
     }
   );
-  console.log("🚀 ~ StudentSubjectList ~ data:", data);
 
   useEffect(() => {
     const firstSubjectId = data?.data[0]?._id;
@@ -55,7 +54,6 @@ export default function StudentSubjectList({
     );
   }
   const subjects = data?.data || [];
-  console.log("🚀 ~ StudentSubjectList ~ subjects:", subjects);
 
   return (
     <div>

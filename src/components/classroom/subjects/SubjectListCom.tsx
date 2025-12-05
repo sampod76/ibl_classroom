@@ -181,25 +181,19 @@ export default function SubjectCom() {
     //   title: 'Class Name',
     //   render: (record: any) => record?.classRoomDetails[0]?.title || 'N/A',
     // },
-    {
-      title: "ClassRoom Code",
-      //   render: (record: any) => record?.classRoomDetails[0]?.classCode || 'N/A',
-      render: (record: any) => (
-        <Space>
-          <span>{record?.classRoomDetails[0]?.classCode}</span>
-          <CopyOutlined
-            style={{ cursor: "pointer", color: "#1677ff" }}
-            onClick={() => handleCopy(record?.classRoomDetails[0]?.classCode)}
-          />
-        </Space>
-      ),
-    },
-    {
-      title: "status",
-      dataIndex: "status",
-      width: 150,
-      render: (status: string) => getStatusTag(status),
-    },
+    // {
+    //   title: "ClassRoom Code",
+    //   //   render: (record: any) => record?.classRoomDetails[0]?.classCode || 'N/A',
+    //   render: (record: any) => (
+    //     <Space>
+    //       <span>{record?.classRoomDetails[0]?.classCode}</span>
+    //       <CopyOutlined
+    //         style={{ cursor: "pointer", color: "#1677ff" }}
+    //         onClick={() => handleCopy(record?.classRoomDetails[0]?.classCode)}
+    //       />
+    //     </Space>
+    //   ),
+    // },
     {
       title: "Syllabus",
       width: 150,
@@ -237,6 +231,12 @@ export default function SubjectCom() {
           </Popover>
         );
       },
+    },
+    {
+      title: "status",
+      dataIndex: "status",
+      width: 150,
+      render: (status: string) => getStatusTag(status),
     },
 
     {
@@ -384,7 +384,7 @@ export default function SubjectCom() {
 
               <Button
                 type="primary"
-                loading={addLoading || updateLoading}
+                loading={addLoading || updateLoading || submitloading}
                 htmlType="submit"
                 block
               >
@@ -398,6 +398,7 @@ export default function SubjectCom() {
                   style={{ marginTop: 10 }}
                   onClick={() => {
                     setEditId(null);
+                    setSyllabusFiles([]);
                     form.resetFields();
                   }}
                 >
