@@ -11,6 +11,8 @@ export enum tagTypes {
   Subject = "Subject",
   seller = "seller",
   user = "user",
+  Classroom = "Classroom",
+  ClassRoomCategory = "ClassRoomCategory",
 }
 
 export const tagTypesList = Object.values(tagTypes);

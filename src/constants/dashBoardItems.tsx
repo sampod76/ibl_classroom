@@ -9,6 +9,7 @@ import type { MenuProps } from "antd";
 import Link from "next/link";
 import { MdAssignment } from "react-icons/md";
 import { USER_ROLE } from "./role";
+import { School } from "lucide-react";
 
 export const dashboardItems = (
   role?: keyof typeof USER_ROLE,
@@ -29,6 +30,10 @@ export const dashboardItems = (
       key: "/dashboard",
       icon: <HomeOutlined />,
     },
+  ];
+
+  const studentSidebar: MenuProps["items"] = [
+    ...defaultSidebarItems,
     {
       label: (
         <Link
@@ -43,11 +48,20 @@ export const dashboardItems = (
     },
   ];
 
-  const studentSidebar: MenuProps["items"] = [...defaultSidebarItems];
-
   const sellerSidebar: MenuProps["items"] = [
     ...defaultSidebarItems,
-
+    {
+      label: (
+        <Link
+          onClick={() => setCollapsed?.(false)}
+          href={`/dashboard/${safeRole}/classroom`}
+        >
+          Classroom
+        </Link>
+      ),
+      key: "/classroom",
+      icon: <HomeOutlined />,
+    },
     {
       label: (
         <Link
@@ -98,6 +112,35 @@ export const dashboardItems = (
   adminSidebar.splice(
     2,
     0, // deleteCount = 0 → কিছু রিমুভ হবে না
+    {
+      label: "Class Room (admin)",
+      key: "classroom",
+      icon: <School className="w-4" />,
+      children: [
+        {
+          label: (
+            <Link
+              onClick={() => (setCollapsed ? setCollapsed(false) : null)}
+              href={`/dashboard/${role}/classroom/classroomCategory`}
+            >
+              Class Room Category
+            </Link>
+          ),
+          key: `/dashboard/${role}/classroom/classroomCategory`,
+        },
+        {
+          label: (
+            <Link
+              onClick={() => (setCollapsed ? setCollapsed(false) : null)}
+              href={`/dashboard/${role}/classroom`}
+            >
+              Class Room
+            </Link>
+          ),
+          key: `/dashboard/${role}/classroom`,
+        },
+      ],
+    },
     {
       label: "User List",
       key: "user",
