@@ -68,7 +68,7 @@ export default function ClassroomCom() {
   const [form] = Form.useForm();
   const [editId, setEditId] = useState<string | null>(null);
   const [bannerImage, setBannerImage] = useState<IFileAfterUpload | null>(null);
-
+  const [fileLoading, setFileLoading] = useState(false);
   // ✅ Pagination
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
@@ -86,9 +86,11 @@ export default function ClassroomCom() {
     limit: size,
     fields: "classroomCategory",
   });
-  const [addClassRoom] = useAddClassroomMutation();
-  const [updateClassRoom] = useUpdateClassroomMutation();
-  const [deleteClassRoom] = useDeleteClassroomMutation();
+  const [addClassRoom, { isLoading: addLoading }] = useAddClassroomMutation();
+  const [updateClassRoom, { isLoading: updateLoading }] =
+    useUpdateClassroomMutation();
+  const [deleteClassRoom, { isLoading: deleteLoading }] =
+    useDeleteClassroomMutation();
 
   const tableData = data?.data || [];
   const meta = data?.meta;
@@ -97,6 +99,7 @@ export default function ClassroomCom() {
   const onFinish = async (values: any) => {
     try {
       if (values?.bannerImage) {
+        setFileLoading(true);
         const [bannerImage] = await Promise.all([
           values?.bannerImage?.length
             ? multipleFilesUploaderS3(
@@ -118,6 +121,8 @@ export default function ClassroomCom() {
       form.resetFields();
     } catch (error) {
       Error_model_hook(error);
+    } finally {
+      setFileLoading(false);
     }
   };
 
@@ -337,7 +342,12 @@ export default function ClassroomCom() {
               )}
             </div>
 
-            <Button type="primary" htmlType="submit" block>
+            <Button
+              type="primary"
+              loading={addLoading || updateLoading}
+              htmlType="submit"
+              block
+            >
               {editId ? "Update Classroom" : "Create Classroom"}
             </Button>
 

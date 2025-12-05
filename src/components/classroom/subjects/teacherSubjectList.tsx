@@ -52,6 +52,7 @@ export default function TeacherSubjectList({
     );
   }
   const subjects = data?.data || [];
+  // console.log("🚀 ~ TeacherSubjectList ~ subjects:", subjects);
 
   return (
     <div>
