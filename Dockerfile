@@ -4,6 +4,7 @@ ENV NODE_ENV=development \
     NEXT_TELEMETRY_DISABLED=1 \
     PNPM_HOME=/pnpm \
     PNPM_STORE_DIR=/pnpm-store
+
 WORKDIR /app
 
 # Enable pnpm via Corepack
@@ -18,12 +19,13 @@ RUN pnpm fetch
 
 
 
-# ---- 2) Builder: install (+prefer-offline) + build Next.js standalone ----
+# ---- 2) Builder: install + build Next.js standalone ----
 FROM node:22.18.0-slim AS builder
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PNPM_HOME=/pnpm \
     PNPM_STORE_DIR=/pnpm-store
+
 WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@10.19.0 --activate \
@@ -35,15 +37,15 @@ COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
 # Install dependencies using the fetched store
 RUN pnpm install --frozen-lockfile --prefer-offline
 
-# ------------------------------------------------------------------
-# ✅ FIX: Prevent Next.js build error: EACCES .next/cache permission
-# ------------------------------------------------------------------
+# -------------------------------------------
+# ✅ FIX (1): Prevent Next.js build-time error
+# -------------------------------------------
 RUN mkdir -p /app/.next/cache && chmod -R 777 /app/.next
 
 # Copy application source code
 COPY . .
 
-# Build in standalone mode (requires output: "standalone" in next.config.js)
+# Build in standalone mode (requires next.config.js → output: "standalone")
 RUN pnpm build
 
 
@@ -56,26 +58,34 @@ ENV NODE_ENV=production \
     HOSTNAME=0.0.0.0
 
 # Install curl + PM2
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    procps \
     && npm i -g pm2 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy standalone Next.js server + minimal node_modules
+# Copy standalone Next.js server + static assets
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+
 COPY ecosystem.config.js ./ecosystem.config.js
 
-# Deploy script + entry script with permissions
+# Deployment scripts
 COPY --chown=node:node deploy_client.sh ./deploy_client.sh
 RUN chmod +x ./deploy_client.sh
 
 COPY --chown=node:node docker-entry.sh ./docker-entry.sh
 RUN chmod +x ./docker-entry.sh
 
-# Drop to non-root user
+# ---------------------------------------------------------
+# ✅ FIX (2): Runtime .next/cache permission for image cache
+# ---------------------------------------------------------
+RUN mkdir -p /app/.next/cache && chmod -R 777 /app/.next
+
+# Switch to non-root user
 USER node
 
 EXPOSE 3001
