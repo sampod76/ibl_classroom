@@ -6,12 +6,15 @@ import { useGetAllAccessSubjectByTeacherQuery } from "@/redux/api/common/subject
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn";
+import { useAppDispatch } from "@/redux/hooks";
+import { addSubject } from "@/redux/features/syllabusSlice";
 
 export default function TeacherSubjectList({
   classRoomId,
 }: {
   classRoomId: string;
 }) {
+  const dispatch = useAppDispatch();
   const subjectId = useSearchParams().get("subjectId");
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -76,21 +79,27 @@ export default function TeacherSubjectList({
         </div>
 
         <ul className="space-y-2">
-          {subjects.map((subject, i) => (
-            <li
-              key={i}
-              className={cn(
-                "p-2 rounded-md cursor-pointer hover:bg-primary/10 hover:text-primary transition text-sm md:text-base border-b-2",
-                subject?.subjectDetails[0]?._id === subjectId &&
-                  "bg-blue-500 text-white  hover:bg-blue-500 hover:text-white"
-              )}
-              onClick={() =>
-                handleQueryChange("subjectId", subject?.subjectDetails[0]?._id)
-              }
-            >
-              {subject?.subjectDetails[0]?.title}
-            </li>
-          ))}
+          {subjects
+            .filter((subject) => subject?.subjectDetails[0]?._id)
+            .map((subject, i) => (
+              <li
+                key={i}
+                className={cn(
+                  "p-2 rounded-md cursor-pointer hover:bg-primary/10 hover:text-primary transition text-sm md:text-base border-b-2",
+                  subject?.subjectDetails[0]?._id === subjectId &&
+                    "bg-blue-500 text-white  hover:bg-blue-500 hover:text-white"
+                )}
+                onClick={() => {
+                  handleQueryChange(
+                    "subjectId",
+                    subject?.subjectDetails[0]?._id
+                  );
+                  dispatch(addSubject(subject?.subjectDetails[0]));
+                }}
+              >
+                {subject?.subjectDetails[0]?.title}
+              </li>
+            ))}
         </ul>
       </aside>
     </div>
