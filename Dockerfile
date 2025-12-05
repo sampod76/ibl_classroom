@@ -1,93 +1,72 @@
-# ---- 1) Base deps with pnpm (Node 22.18.0) ----
+# ------------------------
+# 1) Dependencies + pnpm
+# ------------------------
 FROM node:22.18.0-slim AS deps
-ENV NODE_ENV=development \
-    NEXT_TELEMETRY_DISABLED=1 \
-    PNPM_HOME=/pnpm \
-    PNPM_STORE_DIR=/pnpm-store
-
+ENV PNPM_HOME="/pnpm" \
+    PNPM_STORE_DIR="/pnpm-store" \
+    NODE_ENV=development \
+    NEXT_TELEMETRY_DISABLED=1
+ENV PATH="$PNPM_HOME:$PATH"
 WORKDIR /app
 
-# Enable pnpm via Corepack
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN corepack enable && corepack prepare pnpm@10.19.0 --activate \
-    && mkdir -p "$PNPM_HOME" "$PNPM_STORE_DIR"
+    && mkdir -p /pnpm /pnpm-store
 
-# Copy lockfiles for reproducible installs
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
-
-# Prefetch dependencies into the global pnpm store
 RUN pnpm fetch
 
 
-
-# ---- 2) Builder: install + build Next.js standalone ----
+# ------------------------
+# 2) Builder (Next.js)
+# ------------------------
 FROM node:22.18.0-slim AS builder
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    PNPM_HOME=/pnpm \
-    PNPM_STORE_DIR=/pnpm-store
-
+ENV PNPM_HOME="/pnpm" \
+    PNPM_STORE_DIR="/pnpm-store" \
+    NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1
+ENV PATH="$PNPM_HOME:$PATH"
 WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@10.19.0 --activate \
-    && mkdir -p "$PNPM_HOME" "$PNPM_STORE_DIR"
+    && mkdir -p /pnpm /pnpm-store
 
 COPY --from=deps /pnpm-store /pnpm-store
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
-
-# Install dependencies using the fetched store
 RUN pnpm install --frozen-lockfile --prefer-offline
 
-# -------------------------------------------
-# ✅ FIX (1): Prevent Next.js build-time error
-# -------------------------------------------
-RUN mkdir -p /app/.next/cache && chmod -R 777 /app/.next
-
-# Copy application source code
 COPY . .
 
-# Build in standalone mode (requires next.config.js → output: "standalone")
+RUN mkdir -p .next/cache && chmod -R 777 .next
 RUN pnpm build
 
 
-
-# ---- 3) Runner: PM2-managed, minimal, non-root ----
+# ------------------------
+# 3) Runner (PM2 + smallest)
+# ------------------------
 FROM node:22.18.0-slim AS runner
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3001 \
     HOSTNAME=0.0.0.0
 
-# Install curl + PM2
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    procps \
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl procps \
     && npm i -g pm2 \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-# Copy standalone Next.js server + static assets
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+COPY ecosystem.config.js .
 
-COPY ecosystem.config.js ./ecosystem.config.js
+RUN mkdir -p .next/cache && chmod -R 777 .next
 
-# Deployment scripts
-COPY --chown=node:node deploy_client.sh ./deploy_client.sh
-RUN chmod +x ./deploy_client.sh
-
-COPY --chown=node:node docker-entry.sh ./docker-entry.sh
-RUN chmod +x ./docker-entry.sh
-
-# ---------------------------------------------------------
-# ✅ FIX (2): Runtime .next/cache permission for image cache
-# ---------------------------------------------------------
-RUN mkdir -p /app/.next/cache && chmod -R 777 /app/.next
-
-# Switch to non-root user
 USER node
 
 EXPOSE 3001
 
-ENTRYPOINT ["/app/docker-entry.sh"]
+CMD ["pm2-runtime", "ecosystem.config.js", "--env", "production"]

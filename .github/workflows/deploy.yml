@@ -4,35 +4,84 @@ on:
   push:
     branches: [main]
 
-# ✅ One deploy at a time per branch; newer runs cancel older ones
 concurrency:
   group: ibl_classroom:${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-
 jobs:
   deploy:
-    name: Deploy to VPS dockers
+    name: Build → Upload → Load → Restart
     runs-on: ubuntu-latest
     timeout-minutes: 40
 
     steps:
       - name: 🧠 Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
 
-      - name: 🚀 Deploy to VPS (SSH Key-based)
+      - name: 🐳 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔨 Build Docker Image (NO CACHE)
+        run: |
+          docker build --no-cache -t ibl_classroom:latest .
+
+      - name: 📦 Save Image to TAR
+        run: |
+          docker save ibl_classroom:latest | gzip > ibl_classroom.tar.gz
+
+      - name: 📤 Upload TAR to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "ibl_classroom.tar.gz"
+          target: "/home/sampod/apps/ibl_classroom/"
+
+      - name: 🚀 Run Deploy Script on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script_stop: true
-          # If your deploy sometimes takes longer, adjust this:
-          command_timeout: 30m
           script: |
             bash /home/sampod/apps/ibl_classroom/deploy_client.sh
+
+# name: ibl_classroom
+
+# on:
+#   push:
+#     branches: [main]
+
+# # ✅ One deploy at a time per branch; newer runs cancel older ones
+# concurrency:
+#   group: ibl_classroom:${{ github.ref }}
+#   cancel-in-progress: true
+
+# permissions:
+#   contents: read
+
+# jobs:
+#   deploy:
+#     name: Deploy to VPS dockers
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 40
+
+#     steps:
+#       - name: 🧠 Checkout repository
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 1
+
+#       - name: 🚀 Deploy to VPS (SSH Key-based)
+#         uses: appleboy/ssh-action@v1.0.3
+#         with:
+#           host: ${{ secrets.SSH_HOST }}
+#           username: ${{ secrets.SSH_USER }}
+#           key: ${{ secrets.SSH_PRIVATE_KEY }}
+#           port: 22
+#           script_stop: true
+#           # If your deploy sometimes takes longer, adjust this:
+#           command_timeout: 30m
+#           script: |
+#             bash /home/sampod/apps/ibl_classroom/deploy_client.sh
