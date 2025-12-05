@@ -12,12 +12,14 @@ docker load -i "$IMAGE_TAR"
 log "🚀 Restarting Docker Compose service..."
 cd "$APP_DIR"
 
-docker compose up -d --force-recreate classroom
+# Use SERVICE NAME, not container name
+docker compose up -d --force-recreate client_classroom
 
 log "🧹 Cleaning TAR..."
 rm -f "$IMAGE_TAR"
 
 log "✅ Deployment completed successfully!"
+
 
 
 
