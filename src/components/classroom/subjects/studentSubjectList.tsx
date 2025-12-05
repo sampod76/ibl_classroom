@@ -1,7 +1,7 @@
 "use client";
-import ModalComponent from "@/components/modal/ModalComponents";
+
 import React, { useEffect } from "react";
-import AddSubjectInTeacher from "./addSubject";
+
 import {
   useGetAllAccessSubjectByTeacherQuery,
   useGetAllSubjectQuery,
@@ -9,13 +9,15 @@ import {
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn";
-
+import { useAppDispatch } from "@/redux/hooks";
+import { addSubject } from "@/redux/features/syllabusSlice";
 export default function StudentSubjectList({
   classRoomId,
 }: {
   classRoomId: string;
 }) {
-  console.log("🚀 ~ StudentSubjectList ~ classRoomId:", classRoomId);
+  const dispatch = useAppDispatch();
+
   const subjectId = useSearchParams().get("subjectId");
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -53,6 +55,7 @@ export default function StudentSubjectList({
     );
   }
   const subjects = data?.data || [];
+  console.log("🚀 ~ StudentSubjectList ~ subjects:", subjects);
 
   return (
     <div>
@@ -80,19 +83,24 @@ export default function StudentSubjectList({
         </div>
 
         <ul className="space-y-2">
-          {subjects.map((subject, i) => (
-            <li
-              key={i}
-              className={cn(
-                "p-2 rounded-md cursor-pointer hover:bg-primary/10 hover:text-primary transition text-sm md:text-base border-b-2",
-                subject?._id === subjectId &&
-                  "bg-blue-500 text-white  hover:bg-blue-500 hover:text-white"
-              )}
-              onClick={() => handleQueryChange("subjectId", subject?._id)}
-            >
-              {subject?.title}
-            </li>
-          ))}
+          {subjects
+            .filter((subject) => subject?._id)
+            .map((subject, i) => (
+              <li
+                key={i}
+                className={cn(
+                  "p-2 rounded-md cursor-pointer hover:bg-primary/10 hover:text-primary transition text-sm md:text-base border-b-2",
+                  subject?._id === subjectId &&
+                    "bg-blue-500 text-white  hover:bg-blue-500 hover:text-white"
+                )}
+                onClick={() => {
+                  handleQueryChange("subjectId", subject?._id);
+                  dispatch(addSubject(subject));
+                }}
+              >
+                {subject?.title}
+              </li>
+            ))}
         </ul>
       </aside>
     </div>

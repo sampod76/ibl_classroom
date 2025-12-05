@@ -19,8 +19,12 @@ import { useAppSelector } from "@/redux/hooks";
 import { useGetSingleClassRoomQuery } from "@/redux/api/common/classroomApi";
 import { SkeletonCard } from "../ui/skeleton";
 import { useEffect } from "react";
+import ModalComponent from "../modal/ModalComponents";
+import PdfListShow from "./dialogs/pdfListShow";
 
 export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
+  const { subject } = useAppSelector((state) => state.syllabus);
+  // console.log("🚀 ~ ClassroomHeader ~ subject:", subject);
   const subjectId = useSearchParams().get("subjectId");
   const { data: UserInfo } = useAppSelector((state) => state.userInfo);
   const userRole = UserInfo?.role == "seller" ? "teacher" : UserInfo?.role;
@@ -96,7 +100,24 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
           >
             Classwork
           </button>
-          <button
+          <ModalComponent
+            button={
+              <button
+                // onClick={() => handleQueryChange("activeTab", "syllabuses")}
+                className={`border-b-2 py-3 text-sm font-medium ${
+                  activeTab === "syllabuses"
+                    ? "border-primary text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Course Syllabus
+              </button>
+            }
+          >
+            <PdfListShow files={subject?.syllabusFiles} />
+          </ModalComponent>
+
+          {/* <button
             onClick={() => handleQueryChange("activeTab", "people")}
             className={`border-b-2 py-3 text-sm font-medium ${
               activeTab === "people"
@@ -115,7 +136,7 @@ export function ClassroomHeader({ classRoomId }: { classRoomId: string }) {
             }`}
           >
             Grades
-          </button>
+          </button> */}
         </nav>
       </div>
     </header>

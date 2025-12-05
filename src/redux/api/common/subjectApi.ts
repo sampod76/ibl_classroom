@@ -35,7 +35,7 @@ export const SubjectApi = baseApi.injectEndpoints({
       },
       transformResponse: (response: any) => {
         return {
-          data: response.data as ISubject[],
+          data: response.data as ITeacherAccessSubject[],
           meta: response.meta as IMeta,
         };
       },
@@ -110,13 +110,29 @@ export const {
 
 export interface ISubject {
   _id: string;
-  searchText: string;
   title: string;
   code: string;
   classRoomId: string;
-  subjectDetails: {
-    _id: string;
-    title: string;
-  }[];
+  syllabusFiles: IFileAfterUpload[];
+  author: IUserRef;
+  serial_number: number;
+  status: string;
+  isDelete: string;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
+}
+
+export interface ITeacherAccessSubject {
+  _id: string;
+  seller: IUserRef;
+  classRoomId: string;
+  subjectId: string;
+  role: string;
+  status: string;
+  isDelete: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  subjectDetails: ISubject[];
 }
